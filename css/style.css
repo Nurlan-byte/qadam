@@ -1,6 +1,7 @@
 /*
 shared stylesheet (used by every page)
-Theme variables, Base, Bootstrap overrides, Shared components
+Theme variables, Bootstrap overrides, Base, App layout, Shared components
+Page-specific styles go to css/<page>.css
 */
 
 :root {
@@ -16,6 +17,9 @@ Theme variables, Base, Bootstrap overrides, Shared components
 
   --font-head: "Unbounded", "Arial Black", sans-serif;
   --font-body: "Manrope", "Segoe UI", Arial, sans-serif;
+
+  --radius: 14px;
+  --sidebar-width: 240px;
 }
 
 :root[data-bs-theme="dark"] {
@@ -49,6 +53,78 @@ button:focus-visible,
   outline-offset: 3px;
 }
 
+/* App layout (every page except index.html)
+   Desktop: sidebar on the left, content on the right (CSS Grid) */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background-color: var(--surface);
+  border-right: 1px solid var(--line);
+}
+
+.sidebar .navbar {
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  padding: 1.5rem 1rem;
+}
+
+.sidebar .navbar-collapse {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.sidebar .navbar-nav {
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 2rem;
+}
+
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.sidebar .nav-link i {
+  font-size: 1.1rem;
+}
+
+.sidebar .nav-link:hover {
+  background-color: var(--surface-2);
+  color: var(--ink);
+}
+
+.sidebar .nav-link.active {
+  background-color: var(--surface-2);
+  color: var(--ink);
+  box-shadow: inset 3px 0 0 var(--flame);
+}
+
+.app-main {
+  min-width: 0;
+  padding: 2.5rem 3rem;
+}
+
+.app-footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 /* Logo */
 .brand {
   display: flex;
@@ -71,4 +147,38 @@ button:focus-visible,
   display: block;
   width: 28px;
   height: 28px;
+}
+
+/* Page heading block: every app page starts with it */
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin-bottom: 0.4rem;
+}
+
+.page-subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.panel {
+  padding: 1.5rem;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.btn-qadam {
+  background-color: var(--done);
+  color: var(--bg);
+  border: none;
+  font-weight: 700;
+}
+
+.btn-qadam:hover {
+  background-color: var(--ink);
+  color: var(--bg);
 }
