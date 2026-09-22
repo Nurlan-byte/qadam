@@ -3,75 +3,115 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qadam - small steps, every day</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Qadam — small steps, every day</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <header>
-        <nav aria-label="Main navigation">
-            <a href="index.html">Qadam</a>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="today.html">Today</a></li>
-                <li><a href="calendar.html">Calendar</a></li>
-                <li><a href="habits.html">Habits</a></li>
-                <li><a href="focus.html">Focus</a></li>
-                <li><a href="countdown.html">Countdown</a></li>
-            </ul>
+
+    <header class="border-bottom">
+        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+            <div class="container">
+                <a class="navbar-brand brand" href="index.html">
+                    Qadam
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto gap-lg-3">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="today.html">Today</a></li>
+                        <li class="nav-item"><a class="nav-link" href="calendar.html">Calendar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="habits.html">Habits</a></li>
+                        <li class="nav-item"><a class="nav-link" href="focus.html">Focus</a></li>
+                        <li class="nav-item"><a class="nav-link" href="countdown.html">Countdown</a></li>
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
 
     <main>
-        <section>
-            <h1>Small steps, every day.</h1>
-            <p>
-                Qadam is a task and habit tracker. Plan your day, mark what you did, and watch your streak grow week
-                after week.
-            </p>
-            <a href="today.html">Open today's tasks</a>
-            <a href="habits.html">See your habit's</a>
+
+        <section class="py-5">
+            <div class="container">
+                <div class="row align-items-center g-5">
+
+                    <div class="col-lg-6">
+                        <h1 class="display-4 fw-bold">Small steps, every day.</h1>
+                        <p class="lead">
+                            Qadam is a task and habit tracker. Plan your day, mark what you did,
+                            and watch your streak grow week after week.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3 mt-4">
+                            <a href="today.html" class="btn btn-success btn-lg">Open today's tasks</a>
+                            <a href="habits.html" class="btn btn-outline-secondary btn-lg">See your habits</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </section>
 
-        <section>
-            <h2>Everything you need to keep going, nothing that slows you down</h2>
-            <ul>
-                <li>
-                    <h3>Plan the day</h3>
-                    <p>Tasks grouped into overdue, today and done, so you always know what is next.</p>
-                </li>
-                <li>
-                    <h3>Protect your streak</h3>
-                    <p>See how many days in a row you kept a habit, and don't break the chain.</p>
-                </li>
-                <li>
-                    <h3>Focus in sessions</h3>
-                    <p>Work in focused blocks and see how many hours you really spent.</p>
-                </li>
-            </ul>
+        <section class="py-5">
+            <div class="container">
+                <h2 class="mb-4">Everything you need to keep going, nothing that slows you down</h2>
+                <ul class="list-unstyled row g-4">
+                    <li class="col-md-4">
+                        <h3>Plan the day</h3>
+                        <p>Tasks grouped into overdue, today and done, so you always know what is next.</p>
+                    </li>
+                    <li class="col-md-4">
+                        <h3>Protect your streak</h3>
+                        <p>See how many days in a row you kept a habit, and don't break the chain.</p>
+                    </li>
+                    <li class="col-md-4">
+                        <h3>Focus in sessions</h3>
+                        <p>Work in focused blocks and see how many hours you really spent.</p>
+                    </li>
+                </ul>
+            </div>
         </section>
 
-        <section>
-            <h2>How it works</h2>
-            <ol>
-                <li>
-                    <h3>Add a habit</h3>
-                    <p>Pick a name, a time of day and how often you want to do it.</p>
-                </li>
-                <li>
-                    <h3>Check in daily</h3>
-                    <p>Each check-in fills a day on your calendar.</p>
-                </li>
-                <li>
-                    <h3>Watch the progress</h3>
-                    <p>Streaks and focus time show how far you have come.</p>
-                </li>
-            </ol>
+        <section class="pb-5">
+            <div class="container">
+                <h2 class="mb-4">How it works</h2>
+                <ol>
+                    <li>
+                        <h3>Add a habit</h3>
+                        <p>Pick a name, a time of day and how often you want to do it.</p>
+                    </li>
+                    <li>
+                        <h3>Check in daily</h3>
+                        <p>Each check-in fills a day on your calendar.</p>
+                    </li>
+                    <li>
+                        <h3>Watch the progress</h3>
+                        <p>Streaks and focus time show how far you have come.</p>
+                    </li>
+                </ol>
+            </div>
         </section>
+
     </main>
 
-    <footer>
-        <p>&copy; 2026 Qadam. Midterm project, Web Technologies 1.</p>
+    <footer class="border-top py-4">
+        <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+            <p class="mb-0">&copy; 2026 Qadam. Midterm project, Web Technologies 1.</p>
+            <nav aria-label="Footer">
+                <a href="today.html">Today</a>
+                <span class="mx-2">|</span>
+                <a href="habits.html">Habits</a>
+            </nav>
+        </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+</html>
