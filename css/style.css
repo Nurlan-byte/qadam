@@ -1,0 +1,74 @@
+/*
+shared stylesheet (used by every page)
+Theme variables, Base, Bootstrap overrides, Shared components
+*/
+
+:root {
+  --bg: #12201D;         /* page background */
+  --surface: #1B2B27;    /* panels, cards */
+  --surface-2: #243733;  /* hover, inputs */
+  --ink: #E8F0ED;        /* main text */
+  --muted: #8FA8A1;      /* secondary text */
+  --line: #2E423D;       /* borders, empty days */
+  --done: #4FB39F;       /* completed, main accent */
+  --done-soft: #2D5F55;  /* partly completed */
+  --flame: #F2B705;      /* streaks, today, focus */
+
+  --font-head: "Unbounded", "Arial Black", sans-serif;
+  --font-body: "Manrope", "Segoe UI", Arial, sans-serif;
+}
+
+:root[data-bs-theme="dark"] {
+  --bs-body-bg: var(--bg);
+  --bs-body-color: var(--ink);
+  --bs-body-font-family: var(--font-body);
+  --bs-secondary-color: var(--muted);
+  --bs-border-color: var(--line);
+  --bs-secondary-bg: var(--surface-2);
+  --bs-tertiary-bg: var(--surface);
+  --bs-link-color: var(--done);
+  --bs-link-hover-color: var(--ink);
+  --bs-link-color-rgb: 79, 179, 159;
+  --bs-link-hover-color-rgb: 232, 240, 237;
+}
+
+body {
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--flame);
+  outline-offset: 3px;
+}
+
+/* Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.brand:hover {
+  color: var(--ink);
+}
+
+/* Logo image. Its size is also set in HTML (width/height),
+   so the page doesn't jump while the image loads */
+.brand-logo {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
