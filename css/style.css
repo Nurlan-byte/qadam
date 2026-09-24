@@ -1,6 +1,6 @@
 /*
 shared stylesheet (used by every page)
-Theme variables, Bootstrap overrides, Base, App layout, Shared components
+Theme variables, Bootstrap overrides, Base, App layout, Shared components, Media queries
 Page-specific styles go to css/<page>.css
 */
 
@@ -61,6 +61,7 @@ button:focus-visible,
   min-height: 100vh;
 }
 
+/* position: sticky — the sidebar stays in place while the content scrolls */
 .sidebar {
   position: sticky;
   top: 0;
@@ -69,6 +70,7 @@ button:focus-visible,
   border-right: 1px solid var(--line);
 }
 
+/* The same Bootstrap navbar is made vertical on desktop */
 .sidebar .navbar {
   flex-direction: column;
   align-items: stretch;
@@ -113,7 +115,7 @@ button:focus-visible,
 }
 
 .app-main {
-  min-width: 0;
+  min-width: 0;             /* lets wide tables scroll instead of stretching the grid */
   padding: 2.5rem 3rem;
 }
 
@@ -181,4 +183,43 @@ button:focus-visible,
 .btn-qadam:hover {
   background-color: var(--ink);
   color: var(--bg);
+}
+
+/* Tablet: up to 992px — the sidebar turns into a top bar.
+   991.98px = exactly where Bootstrap's navbar-expand-lg collapses*/
+@media (max-width: 991.98px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    z-index: 100;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sidebar .navbar {
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .sidebar .navbar-nav {
+    margin-top: 1rem;
+  }
+
+  .app-main {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .app-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .panel {
+    padding: 1.1rem;
+  }
 }
