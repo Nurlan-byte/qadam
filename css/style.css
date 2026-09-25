@@ -186,10 +186,12 @@ button:focus-visible,
 }
 
 /* Tablet: up to 992px — the sidebar turns into a top bar.
-   991.98px = exactly where Bootstrap's navbar-expand-lg collapses*/
+  991.98px = exactly where Bootstrap's navbar-expand-lg collapses,
+  so our layout and the burger menu switch at the same moment */
 @media (max-width: 991.98px) {
   .app {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;   
   }
 
   .sidebar {
@@ -202,6 +204,7 @@ button:focus-visible,
   .sidebar .navbar {
     flex-direction: row;
     align-items: center;
+    height: auto;
     padding: 0.75rem 1.25rem;
   }
 
