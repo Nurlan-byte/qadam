@@ -116,6 +116,11 @@ Task groups, Task rows, New task form, Empty state, Media queries
   box-shadow: 0 0 0 3px var(--done-soft);
 }
 
+.today-form .form-check-input {
+  background-color: transparent;
+  border: 2px solid var(--muted);
+}
+
 .today-form .form-check-input:checked {
   background-color: var(--done);
   border-color: var(--done);
