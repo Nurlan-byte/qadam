@@ -1,0 +1,81 @@
+/* Statistics cards */
+.focus-stat {
+  height: 100%;
+  padding: 20px;
+  background-color: var(--surface-2);
+  border-radius: var(--radius);
+}
+
+.focus-stat-value {
+  margin: 16px 0 8px;
+  color: var(--flame);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+/* Pomodoro category list */
+.focus-categories {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.focus-category {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.focus-category:last-child {
+  border-bottom: none;
+}
+
+.focus-category-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.focus-category-text h3 {
+  margin-bottom: 8px;
+}
+
+.focus-category-text p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.focus-session-count {
+  color: var(--done);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Leave room for the fixed timer */
+.focus-page .app-main {
+  padding-bottom: 160px;
+}
+
+/* Timer panel at the bottom of the screen */
+.focus-timer {
+  position: fixed;
+  bottom: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 48px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+.focus-time {
+  color: var(--flame);
+  font-size: 40px;
+  font-weight: 700;
+}
