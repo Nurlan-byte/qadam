@@ -2,3 +2,160 @@
 Habits page (habits.html)
 Week strip, Habit cards, Streak grid, Habits table, Media queries
 */
+
+/* Week strip: seven equal columns (CSS Grid) */
+.habit-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.habit-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.75rem 0.25rem;
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.habit-day-name {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.habit-day-number {
+  font-weight: 700;
+}
+
+.habit-day-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-top: 0.3rem;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+}
+
+.habit-day-done .habit-day-mark {
+  background-color: var(--done);
+  border-color: var(--done);
+  color: var(--bg);
+}
+
+.habit-day-today {
+  background-color: var(--surface-2);
+}
+
+.habit-day-today .habit-day-name,
+.habit-day-today .habit-day-number {
+  color: var(--flame);
+}
+
+.habit-day-today .habit-day-mark {
+  border-color: var(--flame);
+}
+
+/* Habit cards */
+.habit-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--muted);
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.habit-group-count {
+  color: var(--ink);
+}
+
+.habit-cards {
+  list-style: none;
+  padding: 0;
+}
+
+/* position: relative — the streak badge is placed inside the card */
+.habit-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  height: 100%;
+  padding: 1.1rem 1.25rem;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.habit-card:hover {
+  background-color: var(--surface-2);
+}
+
+.habit-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: var(--done-soft);
+  border-radius: 50%;
+  font-size: 1.25rem;
+}
+
+.habit-card-text {
+  flex: 1;
+  min-width: 0;
+  padding-right: 3.5rem;   /* room for the streak badge */
+}
+
+.habit-name {
+  margin-bottom: 0.2rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.habit-meta {
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.habit-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.habit-status-done {
+  color: var(--done);
+}
+
+/* position: absolute — the badge sits in the top right corner of the card */
+.habit-streak {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  background-color: var(--bg);
+  color: var(--flame);
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
