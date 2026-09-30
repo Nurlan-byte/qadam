@@ -97,3 +97,41 @@ Task groups, Task rows, New task form, Empty state, Media queries
   background-color: var(--surface-2);
   color: var(--muted);
 }
+
+/* New task form */
+.today-form .form-control,
+.today-form .form-select {
+  background-color: var(--surface-2);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.today-form .form-control::placeholder {
+  color: var(--muted);
+}
+
+.today-form .form-control:focus,
+.today-form .form-select:focus {
+  border-color: var(--done);
+  box-shadow: 0 0 0 3px var(--done-soft);
+}
+
+.today-form .form-check-input:checked {
+  background-color: var(--done);
+  border-color: var(--done);
+}
+
+/* Empty state */
+.today-empty {
+  text-align: center;
+}
+
+.today-empty-image {
+  display: block;
+  margin: 0.5rem auto 1rem;
+}
+
+.today-empty-text {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
