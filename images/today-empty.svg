@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" role="img" aria-labelledby="title">
+  <title id="title">Empty clipboard with a check mark</title>
+  <ellipse cx="120" cy="164" rx="84" ry="8" fill="#2E423D"/>
+  <rect x="66" y="26" width="108" height="132" rx="14" fill="#1B2B27" stroke="#2E423D" stroke-width="3"/>
+  <rect x="96" y="16" width="48" height="22" rx="8" fill="#243733" stroke="#4FB39F" stroke-width="3"/>
+  <circle cx="92" cy="66" r="9" fill="#4FB39F"/>
+  <path d="M87 66l4 4 7-8" fill="none" stroke="#12201D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="110" y="62" width="46" height="8" rx="4" fill="#2D5F55"/>
+  <circle cx="92" cy="96" r="9" fill="none" stroke="#2E423D" stroke-width="3"/>
+  <rect x="110" y="92" width="38" height="8" rx="4" fill="#2E423D"/>
+  <circle cx="92" cy="126" r="9" fill="none" stroke="#2E423D" stroke-width="3"/>
+  <rect x="110" y="122" width="42" height="8" rx="4" fill="#2E423D"/>
+  <path d="M196 42c6 8 10 13 10 20a12 12 0 0 1-24 0c0-5 3-9 6-12 0 4 2 7 5 7 2-5 2-10 3-15z" fill="#F2B705"/>
+  <circle cx="40" cy="52" r="4" fill="#2D5F55"/>
+  <circle cx="206" cy="112" r="5" fill="#2D5F55"/>
+  <circle cx="30" cy="120" r="3" fill="#F2B705"/>
+</svg>
