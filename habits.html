@@ -84,7 +84,7 @@
                 <li class="habit-day habit-day-today" aria-current="date">
                     <span class="habit-day-name">Wed</span>
                     <time class="habit-day-number" datetime="2026-09-30">30</time>
-                    <span class="habit-day-mark"><span class="visually-hidden">today, 1 of 3 done</span></span>
+                    <span class="habit-day-mark"><span class="visually-hidden">today, 1 of 6 done</span></span>
                 </li>
                 <li class="habit-day">
                     <span class="habit-day-name">Thu</span>
@@ -107,6 +107,86 @@
                     <span class="habit-day-mark"><span class="visually-hidden">upcoming</span></span>
                 </li>
             </ol>
+        </section>
+
+        <!--Habit cards grouped by time of day-->
+        <section class="mb-4" aria-labelledby="habit-list-title">
+            <h2 id="habit-list-title" class="h5 mb-3">My habits</h2>
+            <h3 id="habit-group-morning" class="habit-group-title h6">Morning <span class="habit-group-count">2</span></h3>
+            <ul class="habit-cards row g-3 mb-4" aria-labelledby="habit-group-morning">
+                <li class="col-md-6">
+                    <article class="habit-card">
+                        <span class="habit-icon"><i class="bi bi-cup-straw" aria-hidden="true"></i></span>
+                        <div class="habit-card-text">
+                            <h4 class="habit-name">Morning water</h4>
+                            <p class="habit-meta">Every day · 07:00</p>
+                            <p class="habit-status"><i class="bi bi-circle" aria-hidden="true"></i>Not yet</p>
+                        </div>
+                        <span class="habit-streak"><i class="bi bi-fire" aria-hidden="true"></i>12<span class="visually-hidden"> days in a row</span></span>
+                    </article>
+                </li>
+                <li class="col-md-6">
+                    <article class="habit-card">
+                        <span class="habit-icon"><i class="bi bi-heart-pulse" aria-hidden="true"></i></span>
+                        <div class="habit-card-text">
+                            <h4 class="habit-name">Morning run</h4>
+                            <p class="habit-meta">Mon, Wed, Fri · 07:15</p>
+                            <p class="habit-status habit-status-done"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Done today</p>
+                        </div>
+                        <span class="habit-streak"><i class="bi bi-fire" aria-hidden="true"></i>3<span class="visually-hidden"> days in a row</span></span>
+                    </article>
+                </li>
+            </ul>
+            <h3 id="habit-group-afternoon" class="habit-group-title h6">Afternoon <span class="habit-group-count">2</span></h3>
+            <ul class="habit-cards row g-3 mb-4" aria-labelledby="habit-group-afternoon">
+                <li class="col-md-6">
+                    <article class="habit-card">
+                        <span class="habit-icon"><i class="bi bi-phone-vibrate" aria-hidden="true"></i></span>
+                        <div class="habit-card-text">
+                            <h4 class="habit-name">No phone in lectures</h4>
+                            <p class="habit-meta">Weekdays · 14:00</p>
+                            <p class="habit-status"><i class="bi bi-circle" aria-hidden="true"></i>Not yet</p>
+                        </div>
+                        <span class="habit-streak"><i class="bi bi-fire" aria-hidden="true"></i>7<span class="visually-hidden"> days in a row</span></span>
+                    </article>
+                </li>
+                <li class="col-md-6">
+                    <article class="habit-card">
+                        <span class="habit-icon"><i class="bi bi-journal-text" aria-hidden="true"></i></span>
+                        <div class="habit-card-text">
+                            <h4 class="habit-name">Review lecture notes</h4>
+                            <p class="habit-meta">Weekdays · 17:00</p>
+                            <p class="habit-status"><i class="bi bi-circle" aria-hidden="true"></i>Not yet</p>
+                        </div>
+                        <span class="habit-streak"><i class="bi bi-fire" aria-hidden="true"></i>4<span class="visually-hidden"> days in a row</span></span>
+                    </article>
+                </li>
+            </ul>
+            <h3 id="habit-group-evening" class="habit-group-title h6">Evening <span class="habit-group-count">2</span></h3>
+            <ul class="habit-cards row g-3 mb-4" aria-labelledby="habit-group-evening">
+                <li class="col-md-6">
+                    <article class="habit-card">
+                        <span class="habit-icon"><i class="bi bi-book" aria-hidden="true"></i></span>
+                        <div class="habit-card-text">
+                            <h4 class="habit-name">Read 20 pages</h4>
+                            <p class="habit-meta">Every day · 21:30</p>
+                            <p class="habit-status"><i class="bi bi-circle" aria-hidden="true"></i>Not yet</p>
+                        </div>
+                        <span class="habit-streak"><i class="bi bi-fire" aria-hidden="true"></i>5<span class="visually-hidden"> days in a row</span></span>
+                    </article>
+                </li>
+                <li class="col-md-6">
+                    <article class="habit-card">
+                        <span class="habit-icon"><i class="bi bi-list-check" aria-hidden="true"></i></span>
+                        <div class="habit-card-text">
+                            <h4 class="habit-name">Plan tomorrow</h4>
+                            <p class="habit-meta">Every day · 22:00</p>
+                            <p class="habit-status"><i class="bi bi-circle" aria-hidden="true"></i>Not yet</p>
+                        </div>
+                        <span class="habit-streak"><i class="bi bi-fire" aria-hidden="true"></i>21<span class="visually-hidden"> days in a row</span></span>
+                    </article>
+                </li>
+            </ul>
         </section>
 
         <footer class="app-footer">
