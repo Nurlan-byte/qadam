@@ -73,19 +73,81 @@
             <!--Left column: task lists-->
             <div class="col-lg-8">
                 <section class="panel today-group mb-4" aria-labelledby="today-overdue-title">
-                    <h2 id="today-overdue-title" class="h5">Overdue</h2>
+                    <h2 id="today-overdue-title" class="h5">Overdue <span class="today-count">1</span></h2>
+                    <ul class="today-list">
+                        <li class="today-task">
+                            <input class="form-check-input today-check" type="checkbox" id="task-1">
+                            <label class="today-task-title" for="task-1">Finish the DAA assignment report</label>
+                            <span class="today-tag">Study</span>
+                            <time class="today-time today-time-late" datetime="2026-09-28">28 Sep</time>
+                        </li>
+                    </ul>
                 </section>
 
                 <section class="panel today-group mb-4" aria-labelledby="today-tasks-title">
-                    <h2 id="today-tasks-title" class="h5">Today</h2>
+                    <h2 id="today-tasks-title" class="h5">Today <span class="today-count">4</span></h2>
+                    <ul class="today-list">
+                        <li class="today-task">
+                            <input class="form-check-input today-check" type="checkbox" id="task-2">
+                            <label class="today-task-title" for="task-2">Operating Systems lecture</label>
+                            <span class="today-tag">Study</span>
+                            <time class="today-time" datetime="2026-09-30T14:00">14:00</time>
+                        </li>
+                        <li class="today-task">
+                            <input class="form-check-input today-check" type="checkbox" id="task-3">
+                            <label class="today-task-title" for="task-3">Build the Habits page for Qadam</label>
+                            <span class="today-tag">Project</span>
+                            <time class="today-time" datetime="2026-09-30T16:00">16:00</time>
+                        </li>
+                        <li class="today-task">
+                            <input class="form-check-input today-check" type="checkbox" id="task-4">
+                            <label class="today-task-title" for="task-4">Web Technologies practice</label>
+                            <span class="today-tag">Study</span>
+                            <time class="today-time" datetime="2026-09-30T18:00">18:00</time>
+                        </li>
+                        <li class="today-task">
+                            <input class="form-check-input today-check" type="checkbox" id="task-5">
+                            <label class="today-task-title" for="task-5">Call parents</label>
+                            <span class="today-tag">Personal</span>
+                            <time class="today-time" datetime="2026-09-30T21:00">21:00</time>
+                        </li>
+                    </ul>
                 </section>
 
                 <section class="panel today-group mb-4" aria-labelledby="today-habits-title">
-                    <h2 id="today-habits-title" class="h5">Today's habits</h2>
+                    <h2 id="today-habits-title" class="h5">Today's habits <span class="today-count">2</span></h2>
+                    <ul class="today-list">
+                        <li class="today-task">
+                            <input class="form-check-input today-check" type="checkbox" id="habit-1">
+                            <label class="today-task-title" for="habit-1">Drink a glass of water in the morning</label>
+                            <span class="today-tag">Morning</span>
+                            <span class="today-streak"><i class="bi bi-fire" aria-hidden="true"></i>12 days</span>
+                        </li>
+                        <li class="today-task">
+                            <input class="form-check-input today-check" type="checkbox" id="habit-2">
+                            <label class="today-task-title" for="habit-2">Read 20 pages</label>
+                            <span class="today-tag">Evening</span>
+                            <span class="today-streak"><i class="bi bi-fire" aria-hidden="true"></i>5 days</span>
+                        </li>
+                    </ul>
                 </section>
 
                 <section class="panel today-group" aria-labelledby="today-done-title">
-                    <h2 id="today-done-title" class="h5">Completed</h2>
+                    <h2 id="today-done-title" class="h5">Completed <span class="today-count">2</span></h2>
+                    <ul class="today-list">
+                        <li class="today-task today-task-done">
+                            <input class="form-check-input today-check" type="checkbox" id="task-6" checked>
+                            <label class="today-task-title" for="task-6">Push the Today page skeleton</label>
+                            <span class="today-tag">Project</span>
+                            <time class="today-time" datetime="2026-09-30T10:30">10:30</time>
+                        </li>
+                        <li class="today-task today-task-done">
+                            <input class="form-check-input today-check" type="checkbox" id="task-7" checked>
+                            <label class="today-task-title" for="task-7">Morning run, 3 km</label>
+                            <span class="today-tag">Health</span>
+                            <time class="today-time" datetime="2026-09-30T07:15">07:15</time>
+                        </li>
+                    </ul>
                 </section>
             </div>
 
