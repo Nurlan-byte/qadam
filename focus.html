@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="css/focus.css">
 </head>
 
-<body class="app">
+<body class="app focus-page">
 
     <!--Sidebar (same on every app page)-->
     <header class="sidebar">
@@ -67,6 +67,35 @@
             <p class="page-subtitle">Stay focused, one Pomodoro session at a time.</p>
         </header>
 
+        <section class="panel mb-4" aria-labelledby="focus-statistics-title">
+          <h2 id="focus-statistics-title" class="h5 mb-3">Focus statistics</h2>
+
+          <div class="row g-3">
+            <div class="col-12 col-md-6 col-lg-4">
+              <article class="focus-stat">
+                <h3 class="h6">Focus today</h3>
+                <p class="focus-stat-value">100 min</p>
+                <p class="mb-0 text-secondary">Four sessions completed</p>
+              </article>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <article class="focus-stat">
+                <h3 class="h6">This week</h3>
+                <p class="focus-stat-value">12 sessions</p>
+                <p class="mb-0 text-secondary">Keep moving forward</p>
+              </article>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <article class="focus-stat">
+                <h3 class="h6">Daily goal</h3>
+                <p class="focus-stat-value">4 / 6</p>
+                <p class="mb-0 text-secondary">Two more sessions to go</p>
+              </article>
+            </div>
+          </div>
+        </section>
         <section class="panel mb-4" aria-labelledby="focus-categories-title">
           <h2 id="focus-categories-title" class="h5">Pomodoro categories</h2>
           <p class="text-secondary">Give your next 25 minutes a clear purpose.</p>
@@ -98,6 +127,18 @@
           </ul>
         </section>
 
+        <section class="focus-timer" aria-labelledby="focus-timer-title">
+          <div class="focus-timer-task">
+            <h2 id="focus-timer-title" class="h6 mb-1">Web Technologies</h2>
+            <p class="mb-0 text-secondary">Static Pomodoro preview</p>
+          </div>
+
+          <p class="focus-time mb-0">25:00</p>
+
+          <button type="button" class="btn btn-qadam" disabled>
+            Start focus
+          </button>
+        </section>
         <footer class="app-footer">
             <p class="mb-0">&copy; 2026 Qadam. Midterm project, Web Technologies 1.</p>
         </footer>
