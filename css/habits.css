@@ -310,3 +310,51 @@ Week strip, Habit cards, Streak grid, Habits table, Media queries
   color: var(--muted);
   white-space: nowrap;
 }
+
+/* Tablet: smaller squares so more weeks fit without scrolling */
+@media (max-width: 992px) {
+  .habit-grid-wrap {
+    --habit-cell-size: 16px;
+  }
+}
+
+/* Phone: compact week strip, cards and grid */
+@media (max-width: 576px) {
+  .habit-week {
+    gap: 0.2rem;
+  }
+
+  .habit-day {
+    padding: 0.5rem 0;
+  }
+
+  .habit-day-mark {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+
+  .habit-card {
+    padding: 1rem;
+  }
+
+  .habit-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+
+  .habit-grid-wrap {
+    --habit-cell-size: 13px;
+  }
+
+  .habit-grid,
+  .habit-grid-days {
+    gap: 3px;
+  }
+
+  .habit-grid-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
