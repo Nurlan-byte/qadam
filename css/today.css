@@ -135,3 +135,34 @@ Task groups, Task rows, New task form, Empty state, Media queries
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* Tablet: the form column moves under the task list (col-lg-4),
+   so the illustration can be smaller */
+@media (max-width: 992px) {
+  .today-empty-image {
+    width: 180px;
+  }
+}
+
+/* Phone: tag and time move to a second line under the title */
+@media (max-width: 576px) {
+  .today-task {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+  }
+
+  .today-task-title {
+    flex-basis: calc(100% - 2rem);
+  }
+
+  /* line up with the title, not with the checkbox */
+  .today-tag {
+    margin-left: 1.75rem;
+  }
+
+  .today-time,
+  .today-streak {
+    min-width: 0;
+    text-align: left;
+  }
+}
