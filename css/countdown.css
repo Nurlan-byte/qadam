@@ -53,3 +53,37 @@
     padding-top: 16px;
     color: var(--ink);
 }
+
+/* Tablets */
+@media (max-width: 992px) {
+    .countdown-content {
+        padding: 24px;
+    }
+
+    .countdown-days strong {
+        font-size: 42px;
+    }
+}
+
+/* Phones */
+@media (max-width: 576px) {
+    .countdown-card {
+        min-height: 280px;
+    }
+
+    .countdown-content {
+        padding: 20px;
+    }
+
+    .countdown-category {
+        margin-bottom: 16px;
+    }
+
+    .countdown-days {
+        margin-top: 16px;
+    }
+
+    .countdown-days strong {
+        font-size: 36px;
+    }
+}
