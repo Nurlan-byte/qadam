@@ -1,0 +1,89 @@
+/* Card container */
+.countdown-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+/* Photograph behind the card text */
+.countdown-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.18;
+}
+
+/* Text above the photograph */
+.countdown-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px;
+    color: var(--ink);
+}
+
+.countdown-category {
+    align-self: flex-start;
+    margin-bottom: 20px;
+    padding: 6px 12px;
+    background-color: var(--done-soft);
+    color: var(--ink);
+    border-radius: var(--radius);
+    font-size: 14px;
+}
+
+.countdown-days {
+    margin: 20px 0 12px;
+    color: var(--flame);
+}
+
+.countdown-days strong {
+    font-size: 48px;
+    line-height: 1;
+}
+
+.countdown-description {
+    margin-top: auto;
+    padding-top: 16px;
+    color: var(--ink);
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+    .countdown-content {
+        padding: 24px;
+    }
+
+    .countdown-days strong {
+        font-size: 42px;
+    }
+}
+
+/* Phones */
+@media (max-width: 576px) {
+    .countdown-card {
+        min-height: 280px;
+    }
+
+    .countdown-content {
+        padding: 20px;
+    }
+
+    .countdown-category {
+        margin-bottom: 16px;
+    }
+
+    .countdown-days {
+        margin-top: 16px;
+    }
+
+    .countdown-days strong {
+        font-size: 36px;
+    }
+}
