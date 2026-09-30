@@ -1,9 +1,3 @@
-/*
-Today page (today.html)
-Task groups, Task rows, New task form, Empty state, Media queries
-*/
-
-/* Task groups */
 .today-group h2 {
   display: flex;
   align-items: center;
@@ -26,7 +20,6 @@ Task groups, Task rows, New task form, Empty state, Media queries
   padding: 0;
 }
 
-/* Task row: checkbox, title, tag and time in one line (Flexbox) */
 .today-task {
   display: flex;
   align-items: center;
@@ -51,14 +44,12 @@ Task groups, Task rows, New task form, Empty state, Media queries
   border-color: var(--done);
 }
 
-/* the title takes all free space and pushes tag and time to the right */
 .today-task-title {
   flex: 1;
   min-width: 0;
   cursor: pointer;
 }
 
-/* checked task is crossed out, works without JavaScript */
 .today-check:checked + .today-task-title {
   color: var(--muted);
   text-decoration: line-through;
@@ -98,7 +89,6 @@ Task groups, Task rows, New task form, Empty state, Media queries
   color: var(--muted);
 }
 
-/* New task form */
 .today-form .form-control,
 .today-form .form-select {
   background-color: var(--surface-2);
@@ -126,7 +116,6 @@ Task groups, Task rows, New task form, Empty state, Media queries
   border-color: var(--done);
 }
 
-/* Empty state */
 .today-empty {
   text-align: center;
 }
@@ -141,15 +130,12 @@ Task groups, Task rows, New task form, Empty state, Media queries
   font-size: 0.9rem;
 }
 
-/* Tablet: the form column moves under the task list (col-lg-4),
-   so the illustration can be smaller */
 @media (max-width: 992px) {
   .today-empty-image {
     width: 180px;
   }
 }
 
-/* Phone: tag and time move to a second line under the title */
 @media (max-width: 576px) {
   .today-task {
     flex-wrap: wrap;
@@ -160,7 +146,6 @@ Task groups, Task rows, New task form, Empty state, Media queries
     flex-basis: calc(100% - 2rem);
   }
 
-  /* line up with the title, not with the checkbox */
   .today-tag {
     margin-left: 1.75rem;
   }
