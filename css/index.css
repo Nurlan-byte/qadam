@@ -1,6 +1,6 @@
 /*
 Qadam — landing page (index.html)
-Header, Hero
+Header, Hero, Streak card 
 */
 /* 1. Header */
 .site-header {
@@ -44,3 +44,59 @@ Header, Hero
   font-size: 1.15rem;
   color: var(--muted);
 }
+
+.streak-card {
+  position: relative;
+  margin: 0;
+  padding: 2rem;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+
+.streak-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.25rem;
+  font-weight: 700;
+}
+
+.streak-period {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.streak-badge {
+  position: absolute;
+  top: -14px;
+  right: 24px;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background-color: var(--flame);
+  color: var(--bg);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.streak-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.day {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background-color: var(--line);
+}
+
+.day.l1 { background-color: var(--done-soft); }
+.day.l2 { background-color: var(--done); }
+
+.day.today {
+  outline: 3px solid var(--flame);
+  outline-offset: 2px;
+}
+
