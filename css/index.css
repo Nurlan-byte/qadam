@@ -1,18 +1,18 @@
 /*
 Qadam — landing page (index.html)
-Header, Hero, Streak card, Features, Steps, CTA, Footer
+Header, Hero, Streak card, Features, Steps, CTA, Footer, Media queries
 */
 /* Shared section spacing */
 .section {
   padding: 4.5rem 0;
 }
-
+ 
 .section-title {
   font-size: clamp(1.5rem, 3vw, 2.1rem);
   max-width: 28ch;
   margin-bottom: 2.5rem;
 }
-
+ 
 /* 1. Header */
 .site-header {
   position: sticky;
@@ -22,16 +22,16 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
-
+ 
 .site-header .nav-link {
   color: var(--muted);
   font-weight: 500;
 }
-
+ 
 .site-header .nav-link:hover {
   color: var(--ink);
 }
-
+ 
 .site-header .nav-link.active {
   color: var(--ink);
   text-decoration: underline;
@@ -39,23 +39,23 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   text-decoration-thickness: 3px;
   text-underline-offset: 8px;
 }
-
+ 
 /* Hero */
 .hero {
   padding: 5rem 0 4rem;
 }
-
+ 
 .hero-title {
   font-size: clamp(2.2rem, 5vw, 3.6rem);
   margin-bottom: 1.25rem;
 }
-
+ 
 .hero-text {
   max-width: 32rem;
   font-size: 1.15rem;
   color: var(--muted);
 }
-
+ 
 /* Streak card */
 /* position: relative — the badge inside is placed relative to this card */
 .streak-card {
@@ -66,7 +66,7 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   border: 1px solid var(--line);
   border-radius: 20px;
 }
-
+ 
 .streak-head {
   display: flex;
   justify-content: space-between;
@@ -74,13 +74,13 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   margin-bottom: 1.25rem;
   font-weight: 700;
 }
-
+ 
 .streak-period {
   color: var(--muted);
   font-weight: 500;
   font-size: 0.9rem;
 }
-
+ 
 /* position: absolute — the badge sits on the top edge of the card */
 .streak-badge {
   position: absolute;
@@ -93,28 +93,29 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   font-size: 0.85rem;
   font-weight: 700;
 }
-
+ 
 /* CSS Grid: 7 columns = 7 days of the week */
 .streak-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
 }
-
+ 
 .day {
   aspect-ratio: 1;
   border-radius: 6px;
   background-color: var(--line);
 }
-
+ 
 .day.l1 { background-color: var(--done-soft); }
 .day.l2 { background-color: var(--done); }
-
+ 
 .day.today {
   outline: 3px solid var(--flame);
   outline-offset: 2px;
 }
-
+ 
+/* Features: Flexbox */
 .feature-list {
   display: flex;
   gap: 2rem;
@@ -122,23 +123,24 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   padding: 0;
   margin: 0;
 }
-
+ 
 .feature {
-  flex: 1 1 0;              
+  flex: 1 1 0;              /* all three share the width equally */
   padding-top: 1.25rem;
   border-top: 3px solid var(--done);
 }
-
+ 
 .feature h3 {
   font-size: 1.05rem;
   margin-bottom: 0.6rem;
 }
-
+ 
 .feature p {
   margin: 0;
   color: var(--muted);
 }
-
+ 
+/* Steps: CSS Grid + CSS counter */
 .steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -148,7 +150,7 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   padding: 0;
   margin: 0;
 }
-
+ 
 .steps li {
   counter-increment: step;
   padding: 1.5rem;
@@ -156,7 +158,8 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   border: 1px solid var(--line);
   border-radius: 16px;
 }
-
+ 
+/* ::before draws the number circle, the counter fills in the digit */
 .steps li::before {
   content: counter(step);
   display: inline-grid;
@@ -170,33 +173,87 @@ Header, Hero, Streak card, Features, Steps, CTA, Footer
   font-family: var(--font-head);
   font-weight: 700;
 }
-
+ 
 .steps h3 {
   font-size: 1.05rem;
 }
-
+ 
 .steps p {
   margin: 0;
   color: var(--muted);
 }
-
+ 
+/* Call to action + footer */
 .cta {
   padding: 3rem;
   border-radius: 24px;
   background-color: var(--done-soft);
 }
-
+ 
 .cta h2 {
   font-size: clamp(1.3rem, 2.5vw, 1.8rem);
 }
-
+ 
 .site-footer {
   padding: 2rem 0;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 0.9rem;
 }
-
+ 
 .site-footer a {
   color: inherit;
 }
+ 
+/* Media queries */
+ 
+/* Tablet: up to 992px */
+@media (max-width: 992px) {
+  .hero {
+    padding: 3rem 0;
+  }
+ 
+  .hero-text {
+    max-width: none;
+  }
+ 
+  .feature-list {
+    flex-wrap: wrap;        /* cards may move to the next line */
+  }
+ 
+  .feature {
+    flex: 1 1 45%;          /* two per row */
+  }
+ 
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+ 
+/* Mobile: up to 576px */
+@media (max-width: 576px) {
+  .section {
+    padding: 3rem 0;
+  }
+ 
+  .feature-list {
+    flex-direction: column;   /* one under another */
+  }
+ 
+  .steps {
+    grid-template-columns: 1fr;
+  }
+ 
+  .streak-card {
+    padding: 1.25rem;
+  }
+ 
+  .streak-grid {
+    gap: 5px;
+  }
+ 
+  .cta {
+    padding: 2rem 1.5rem;
+  }
+}
+ 
