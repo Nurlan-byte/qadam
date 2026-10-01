@@ -1,6 +1,6 @@
 /*
 Qadam — calendar page (calendar.html)
-Week view, Events
+Week view, Events, Month table
 */
 
 /* Week view: one grid, 1 column of hour labels + 7 day columns.
@@ -102,3 +102,57 @@ Week view, Events
 /* Length in minutes -> height */
 .cal-d50 { height: 53px; }
 .cal-d60 { height: 64px; }
+
+/* Month view: a real table, because a month really is rows and columns.
+   position: relative keeps the wide table inside .table-responsive */
+.calendar-month {
+    position: relative;
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--ink);
+    --bs-table-border-color: var(--line);
+    table-layout: fixed;
+    min-width: 560px;
+}
+
+.calendar-month caption {
+    caption-side: top;
+    padding-top: 0;
+    color: var(--muted);
+}
+
+.calendar-month thead th {
+    color: var(--muted);
+    font-weight: 500;
+    text-align: center;
+}
+
+.calendar-day {
+    height: 68px;
+    vertical-align: top;
+}
+
+.calendar-day-number {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Days of the neighbouring months are dimmed */
+.calendar-day-muted .calendar-day-number {
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.calendar-day-today .calendar-day-number {
+    color: var(--flame);
+}
+
+.calendar-count {
+    display: inline-block;
+    margin-top: 0.3rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 6px;
+    background-color: var(--done-soft);
+    font-size: 0.7rem;
+}
