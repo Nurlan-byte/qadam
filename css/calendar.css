@@ -1,0 +1,104 @@
+/*
+Qadam — calendar page (calendar.html)
+Week view, Events
+*/
+
+/* Week view: one grid, 1 column of hour labels + 7 day columns.
+   Both rows share the same columns, so hours and days always line up */
+.cal-week {
+    display: grid;
+    grid-template-columns: 56px repeat(7, 1fr);
+    gap: 4px;
+    overflow-x: auto;         /* narrow screens scroll sideways instead of squeezing */
+}
+
+/* Row 1: day headers */
+.cal-day-head {
+    padding: 0.5rem 0;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.cal-day-head--today {
+    background-color: var(--surface-2);
+}
+
+.cal-day-name {
+    display: block;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.cal-day-number {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+}
+
+/* Row 2: hour labels. One hour = 64px, the same value the columns use */
+.cal-hours {
+    display: flex;
+    flex-direction: column;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.cal-hour {
+    height: 64px;
+    line-height: 1;
+}
+
+/* 13 hours from 08:00 to 20:00, 64px each.
+   The gradient draws a line at the start of every hour */
+.cal-day-column {
+    position: relative;      /* events inside are placed against this column */
+    height: 832px;
+    border-radius: 10px;
+    background-color: var(--surface-2);
+    background-image: repeating-linear-gradient(to bottom,
+            var(--line) 0 1px,
+            transparent 1px 64px);
+}
+
+/* Events.
+   position: absolute — every event is placed inside its own day column.
+   One hour = 64px, so 14:00 is (14 - 8) * 64 = 384px from the top */
+.cal-event {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    overflow: hidden;
+    padding: 0.25rem 0.4rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--done);
+    background-color: var(--done-soft);
+}
+
+.cal-event-title {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.cal-event-time {
+    margin: 0;
+    line-height: 1.1;
+    color: var(--ink);
+    font-size: 0.68rem;
+    opacity: 0.75;
+}
+
+/* Start time -> distance from the top of the column */
+.cal-s1200 { top: 256px; }
+.cal-s1305 { top: 325px; }
+.cal-s1400 { top: 384px; }
+.cal-s1500 { top: 448px; }
+.cal-s1600 { top: 512px; }
+.cal-s1700 { top: 576px; }
+.cal-s1800 { top: 640px; }
+
+/* Length in minutes -> height */
+.cal-d50 { height: 53px; }
+.cal-d60 { height: 64px; }
