@@ -65,6 +65,7 @@ button:focus-visible,
 .sidebar {
   position: sticky;
   top: 0;
+  align-self: start; 
   height: 100vh;
   background-color: var(--surface);
   border-right: 1px solid var(--line);
