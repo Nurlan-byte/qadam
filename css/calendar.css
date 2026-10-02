@@ -1,6 +1,6 @@
 /*
 Qadam — calendar page (calendar.html)
-Week view, Events, Month table
+Week view, Events, Month table, Media queries
 */
 
 /* Week view: one grid, 1 column of hour labels + 7 day columns.
@@ -9,10 +9,9 @@ Week view, Events, Month table
     display: grid;
     grid-template-columns: 56px repeat(7, 1fr);
     gap: 4px;
-    overflow-x: auto;         /* narrow screens scroll sideways instead of squeezing */
+    overflow-x: auto;         
 }
 
-/* Row 1: day headers */
 .cal-day-head {
     padding: 0.5rem 0;
     border-radius: 10px;
@@ -35,7 +34,6 @@ Week view, Events, Month table
     font-weight: 700;
 }
 
-/* Row 2: hour labels. One hour = 64px, the same value the columns use */
 .cal-hours {
     display: flex;
     flex-direction: column;
@@ -48,10 +46,8 @@ Week view, Events, Month table
     line-height: 1;
 }
 
-/* 13 hours from 08:00 to 20:00, 64px each.
-   The gradient draws a line at the start of every hour */
 .cal-day-column {
-    position: relative;      /* events inside are placed against this column */
+    position: relative;      
     height: 832px;
     border-radius: 10px;
     background-color: var(--surface-2);
@@ -60,9 +56,6 @@ Week view, Events, Month table
             transparent 1px 64px);
 }
 
-/* Events.
-   position: absolute — every event is placed inside its own day column.
-   One hour = 64px, so 14:00 is (14 - 8) * 64 = 384px from the top */
 .cal-event {
     position: absolute;
     left: 3px;
@@ -90,7 +83,6 @@ Week view, Events, Month table
     opacity: 0.75;
 }
 
-/* Start time -> distance from the top of the column */
 .cal-s1200 { top: 256px; }
 .cal-s1305 { top: 325px; }
 .cal-s1400 { top: 384px; }
@@ -99,12 +91,9 @@ Week view, Events, Month table
 .cal-s1700 { top: 576px; }
 .cal-s1800 { top: 640px; }
 
-/* Length in minutes -> height */
 .cal-d50 { height: 53px; }
 .cal-d60 { height: 64px; }
 
-/* Month view: a real table, because a month really is rows and columns.
-   position: relative keeps the wide table inside .table-responsive */
 .calendar-month {
     position: relative;
     --bs-table-bg: transparent;
@@ -138,7 +127,6 @@ Week view, Events, Month table
     font-size: 0.9rem;
 }
 
-/* Days of the neighbouring months are dimmed */
 .calendar-day-muted .calendar-day-number {
     color: var(--muted);
     font-weight: 500;
@@ -155,4 +143,33 @@ Week view, Events, Month table
     border-radius: 6px;
     background-color: var(--done-soft);
     font-size: 0.7rem;
+}
+
+@media (max-width: 992px) {
+    .cal-week {
+        grid-template-columns: 48px repeat(7, minmax(96px, 1fr));
+    }
+
+    .cal-hours {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .cal-week {
+        grid-template-columns: 48px 1fr;
+    }
+
+    .cal-day-head:not(.cal-day-head--today),
+    .cal-day-column:not(.cal-day-column--today) {
+        display: none;
+    }
+
+    .calendar-day {
+        height: 56px;
+    }
+
+    .calendar-count {
+        font-size: 0.62rem;
+    }
 }
