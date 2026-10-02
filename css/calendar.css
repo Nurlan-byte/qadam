@@ -1,0 +1,175 @@
+/*
+Qadam — calendar page (calendar.html)
+Week view, Events, Month table, Media queries
+*/
+
+/* Week view: one grid, 1 column of hour labels + 7 day columns.
+   Both rows share the same columns, so hours and days always line up */
+.cal-week {
+    display: grid;
+    grid-template-columns: 56px repeat(7, 1fr);
+    gap: 4px;
+    overflow-x: auto;         
+}
+
+.cal-day-head {
+    padding: 0.5rem 0;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.cal-day-head--today {
+    background-color: var(--surface-2);
+}
+
+.cal-day-name {
+    display: block;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.cal-day-number {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+}
+
+.cal-hours {
+    display: flex;
+    flex-direction: column;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.cal-hour {
+    height: 64px;
+    line-height: 1;
+}
+
+.cal-day-column {
+    position: relative;      
+    height: 832px;
+    border-radius: 10px;
+    background-color: var(--surface-2);
+    background-image: repeating-linear-gradient(to bottom,
+            var(--line) 0 1px,
+            transparent 1px 64px);
+}
+
+.cal-event {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    overflow: hidden;
+    padding: 0.25rem 0.4rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--done);
+    background-color: var(--done-soft);
+}
+
+.cal-event-title {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.cal-event-time {
+    margin: 0;
+    line-height: 1.1;
+    color: var(--ink);
+    font-size: 0.68rem;
+    opacity: 0.75;
+}
+
+.cal-s1200 { top: 256px; }
+.cal-s1305 { top: 325px; }
+.cal-s1400 { top: 384px; }
+.cal-s1500 { top: 448px; }
+.cal-s1600 { top: 512px; }
+.cal-s1700 { top: 576px; }
+.cal-s1800 { top: 640px; }
+
+.cal-d50 { height: 53px; }
+.cal-d60 { height: 64px; }
+
+.calendar-month {
+    position: relative;
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--ink);
+    --bs-table-border-color: var(--line);
+    table-layout: fixed;
+    min-width: 560px;
+}
+
+.calendar-month caption {
+    caption-side: top;
+    padding-top: 0;
+    color: var(--muted);
+}
+
+.calendar-month thead th {
+    color: var(--muted);
+    font-weight: 500;
+    text-align: center;
+}
+
+.calendar-day {
+    height: 68px;
+    vertical-align: top;
+}
+
+.calendar-day-number {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.calendar-day-muted .calendar-day-number {
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.calendar-day-today .calendar-day-number {
+    color: var(--flame);
+}
+
+.calendar-count {
+    display: inline-block;
+    margin-top: 0.3rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 6px;
+    background-color: var(--done-soft);
+    font-size: 0.7rem;
+}
+
+@media (max-width: 992px) {
+    .cal-week {
+        grid-template-columns: 48px repeat(7, minmax(96px, 1fr));
+    }
+
+    .cal-hours {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .cal-week {
+        grid-template-columns: 48px 1fr;
+    }
+
+    .cal-day-head:not(.cal-day-head--today),
+    .cal-day-column:not(.cal-day-column--today) {
+        display: none;
+    }
+
+    .calendar-day {
+        height: 56px;
+    }
+
+    .calendar-count {
+        font-size: 0.62rem;
+    }
+}
