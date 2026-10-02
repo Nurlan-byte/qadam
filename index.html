@@ -58,29 +58,60 @@
                             and watch your streak grow week after week.
                         </p>
                         <div class="d-flex flex-wrap gap-3 mt-4">
-                            <a href="today.html" class="btn btn-success btn-lg">Open today's tasks</a>
+                            <a href="today.html" class="btn btn-qadam btn-lg">Open today's tasks</a>
                             <a href="habits.html" class="btn btn-outline-light btn-lg">See your habits</a>
                         </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <!--Streak card: CSS Grid of 35 days (5 weeks x 7 days)-->
+                        <figure class="streak-card">
+                            <figcaption class="streak-head">
+                                <span>Morning run</span>
+                                <span class="streak-period">Last 5 weeks</span>
+                            </figcaption>
+                            <span class="streak-badge">21-day streak</span>
+
+                            <div class="streak-grid" aria-label="Habit calendar for the last 5 weeks">
+                                <!--week 1-->
+                                <span class="day"></span><span class="day l1"></span><span class="day"></span>
+                                <span class="day l2"></span><span class="day"></span><span class="day"></span>
+                                <span class="day l1"></span>
+                                <!--week 2-->
+                                <span class="day l1"></span><span class="day"></span><span class="day l2"></span>
+                                <span class="day l1"></span><span class="day l2"></span><span class="day l2"></span>
+                                <span class="day"></span>
+                                <!--weeks 3-5: 21 days in a row-->
+                                <span class="day l2"></span><span class="day l2"></span><span class="day l2"></span>
+                                <span class="day l2"></span><span class="day l2"></span><span class="day l2"></span>
+                                <span class="day l2"></span>
+                                <span class="day l2"></span><span class="day l2"></span><span class="day l2"></span>
+                                <span class="day l2"></span><span class="day l2"></span><span class="day l2"></span>
+                                <span class="day l2"></span>
+                                <span class="day l2"></span><span class="day l2"></span><span class="day l2"></span>
+                                <span class="day l2"></span><span class="day l2"></span><span class="day l2"></span>
+                                <span class="day l2 today"></span>
+                            </div>
+                        </figure>
                     </div>
 
                 </div>
             </div>
         </section>
 
-        <!--Features-->
-        <section class="py-5">
+        <section class="section">
             <div class="container">
-                <h2 class="mb-4">Everything you need to keep going, nothing that slows you down</h2>
-                <ul class="list-unstyled row g-4">
-                    <li class="col-md-4">
+                <h2 class="section-title">Everything you need to keep going, nothing that slows you down</h2>
+                <ul class="feature-list">
+                    <li class="feature">
                         <h3>Plan the day</h3>
                         <p>Tasks grouped into overdue, today and done, so you always know what is next.</p>
                     </li>
-                    <li class="col-md-4">
+                    <li class="feature">
                         <h3>Protect your streak</h3>
                         <p>See how many days in a row you kept a habit, and don't break the chain.</p>
                     </li>
-                    <li class="col-md-4">
+                    <li class="feature">
                         <h3>Focus in sessions</h3>
                         <p>Work in focused blocks and see how many hours you really spent.</p>
                     </li>
@@ -88,11 +119,10 @@
             </div>
         </section>
 
-        <!--How it works-->
-        <section class="pb-5">
+        <section class="section pt-0">
             <div class="container">
-                <h2 class="mb-4">How it works</h2>
-                <ol>
+                <h2 class="section-title">How it works</h2>
+                <ol class="steps">
                     <li>
                         <h3>Add a habit</h3>
                         <p>Pick a name, a time of day and how often you want to do it.</p>
@@ -106,6 +136,18 @@
                         <p>Streaks and focus time show how far you have come.</p>
                     </li>
                 </ol>
+            </div>
+        </section>
+
+        <section class="section pt-0">
+            <div class="container">
+                <div class="cta d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                    <div>
+                        <h2 class="mb-2">Start with one habit.</h2>
+                        <p class="mb-0">Add more once the first one sticks.</p>
+                    </div>
+                    <a href="habits.html" class="btn btn-light btn-lg px-4">Go to habits</a>
+                </div>
             </div>
         </section>
 
