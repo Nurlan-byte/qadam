@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/weather.css">
 </head>
 
 <body class="app">
@@ -57,7 +58,8 @@
                         <a class="nav-link" href="countdown.html"><i class="bi bi-hourglass-split"
                                 aria-hidden="true"></i>Countdown</a>
                     </li>
-                </ul>
+                    <li class="nav-item"><a class="nav-link" href="statistics.html"><i class="bi bi-bar-chart" aria-hidden="true"></i>Statistics</a></li>
+                    </ul>
             </div>
         </nav>
     </header>
@@ -68,6 +70,27 @@
             <h1 class="page-title">Calendar</h1>
             <p class="page-subtitle">Your week and month at a glance.</p>
         </header>
+
+        <section class="panel mb-4" id="weather-planner" aria-labelledby="weather-title">
+            <h2 class="h5" id="weather-title">Plan around the weather</h2>
+            <p>Check the next five days before scheduling outdoor tasks.</p>
+            <div class="weather-toolbar">
+                <div>
+                    <label class="form-label" for="weather-city">City</label>
+                    <select class="form-select" id="weather-city">
+                        <option value="almaty">Almaty</option>
+                        <option value="astana">Astana</option>
+                        <option value="shymkent">Shymkent</option>
+                    </select>
+                </div>
+                <button class="btn btn-qadam" type="button" id="weather-refresh">Refresh forecast</button>
+            </div>
+            <p id="weather-status" role="status" aria-live="polite">Loading forecast…</p>
+            <div class="weather-days" id="weather-days"></div>
+            <p class="weather-source">Weather data by <a href="https://open-meteo.com/">Open-Meteo</a>. Forecasts can change.</p>
+        </section>
+
+
 
         <section class="panel" aria-labelledby="cal-week-title">
             <h2 id="cal-week-title" class="h5 mb-3">Week of 28 September</h2>
@@ -366,7 +389,7 @@
         </section>
 
         <footer class="app-footer">
-            <p class="mb-0">&copy; 2026 Qadam. Midterm project, Web Technologies 1.</p>
+            <p class="mb-0">&copy; 2026 Qadam. Web Technologies 1. Final project.</p>
         </footer>
     </main>
 
