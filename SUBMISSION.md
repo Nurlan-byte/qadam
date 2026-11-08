@@ -1,6 +1,14 @@
 # Ссылки для сдачи Qadam
 
-Основная ссылка на готовую final-версию:
+Основная ссылка на репозиторий:
+
+https://github.com/Nurlan-byte/qadam
+
+Работающий сайт:
+
+https://nurlan-byte.github.io/qadam/
+
+Ветка разработки final:
 
 https://github.com/Nurlan-byte/qadam/tree/project/final
 
@@ -17,4 +25,4 @@ https://github.com/Nurlan-byte/qadam/tree/project/endterm
 
 Участники: adilzhandev, AsylStyle и Nurlan-byte. Распределение работы есть в README.md; памятка для защиты — в DEFENSE.md.
 
-Публикация final на GitHub Pages пока отложена. До публикации ссылка https://nurlan-byte.github.io/qadam/ показывает версию из main, поэтому для проверки готового final используйте ссылку на ветку выше.
+GitHub Pages публикует ветку main. Для просмотра зафиксированного этапа используйте соответствующий тег выше.
