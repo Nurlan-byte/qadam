@@ -260,7 +260,11 @@
 }
 
 :root[data-bs-theme="light"] .countdown-image {
-    opacity: 0.08;
+    opacity: 0.3;
+}
+
+:root[data-bs-theme="light"] .countdown-days {
+    color: var(--ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
