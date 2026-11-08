@@ -1,15 +1,9 @@
-import { STORAGE, getLocalDate, readStorage, writeStorage, escapeHTML, announce, formatDate } from "./shared.js";
+import { STORAGE, getLocalDate, isValidDate, readStorage, writeStorage, escapeHTML, announce, formatDate } from "./shared.js";
 import { categories, defaultTasks } from "./data.js";
 
 let tasks = loadTasks();
 let favoritesOnly = false;
-
-function isValidDate(value) {
-    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-    const [year, month, day] = value.split("-").map(Number);
-    const date = new Date(`${value}T12:00:00`);
-    return year > 0 && date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day;
-}
+let editingTaskId = null;
 
 function isValidTime(value) {
     return value === "" || /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
@@ -24,7 +18,7 @@ function isValidTask(task) {
 }
 
 function loadTasks() {
-    const stored = readStorage(STORAGE.tasks, defaultTasks);
+    const stored = readStorage(STORAGE.tasks, defaultTasks, Array.isArray);
     if (!Array.isArray(stored)) return defaultTasks.map((task) => ({ ...task }));
     const ids = new Set();
     return stored.filter((task) => {
@@ -46,6 +40,11 @@ function saveTasks(message) {
     renderTasks();
     announce(saved === false ? `${message} This change could not be saved in your browser.` : message);
     return saved !== false;
+}
+
+function getTasks({ reload = false } = {}) {
+    if (reload) tasks = loadTasks();
+    return tasks.map((task) => ({ ...task }));
 }
 
 function getTaskById(taskId) {
@@ -101,6 +100,7 @@ function renderTaskCard(task) {
         ${timeMarkup}
         <div class="task-actions">
             <button class="task-favorite" type="button" data-action="favorite" aria-pressed="${isFavorite}" aria-label="${isFavorite ? "Remove from" : "Add to"} favorites: ${title}"><span class="task-favorite-icon" aria-hidden="true">${isFavorite ? "★" : "☆"}</span></button>
+            <button class="task-edit btn btn-sm btn-outline-light" type="button" aria-label="Edit task: ${title}">Edit</button>
             <button class="task-delete" type="button" aria-label="Delete task: ${title}">Delete</button>
         </div>
         ${notesMarkup}
@@ -133,6 +133,8 @@ function renderTasks() {
         section.hidden = groupTasks.length === 0;
     }
 
+    const clearButton = document.querySelector("#clear-tasks");
+    if (clearButton) clearButton.disabled = tasks.length === 0;
     const emptyMessage = document.querySelector("#task-empty");
     if (emptyMessage) emptyMessage.hidden = visibleTasks.length > 0;
     const openCount = tasks.filter((task) => !task.completed).length;
@@ -182,29 +184,79 @@ function setupTaskFilters() {
     });
 }
 
-function addTask(form) {
-    const formData = new FormData(form);
-    tasks.push({
-        id: `task-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        title: String(formData.get("title")).trim(),
-        date: String(formData.get("date")),
-        time: String(formData.get("time") || ""),
-        list: String(formData.get("list")),
-        notes: String(formData.get("notes") || "").trim(),
-        completed: false,
-        favorite: false
-    });
-    const saved = saveTasks("Task added.");
+function readTaskForm(form) {
+    const data = new FormData(form);
+    return {
+        title: String(data.get("title")).trim(),
+        date: String(data.get("date")),
+        time: String(data.get("time") || ""),
+        list: String(data.get("list")),
+        notes: String(data.get("notes") || "").trim()
+    };
+}
+
+function resetTaskForm(form) {
+    editingTaskId = null;
     form.reset();
     form.querySelector("#task-date").value = getLocalDate();
+    form.querySelectorAll("input, select, textarea").forEach((field) => showFieldError(field, ""));
+    document.querySelector("#today-form-title").textContent = "New task";
+    form.querySelector("#task-submit").textContent = "Add task";
+    form.querySelector("#task-cancel").hidden = true;
+    form.querySelector("#task-form-status").textContent = "";
+}
+
+function startEditingTask(taskId) {
+    const task = getTaskById(taskId);
+    if (!task) return;
+    const form = document.querySelector("#task-form");
+    resetTaskForm(form);
+    editingTaskId = taskId;
+    for (const name of ["title", "date", "time", "list", "notes"]) {
+        form.elements.namedItem(name).value = task[name];
+    }
+    document.querySelector("#today-form-title").textContent = "Edit task";
+    form.querySelector("#task-submit").textContent = "Save changes";
+    form.querySelector("#task-cancel").hidden = false;
+    form.querySelector("#task-title").focus();
+    announce(`Editing: ${task.title}`);
+}
+
+function submitTask(form) {
+    const values = readTaskForm(form);
+    const isEditing = editingTaskId !== null;
+    if (isEditing) {
+        const task = getTaskById(editingTaskId);
+        if (!task) {
+            resetTaskForm(form);
+            announce("That task no longer exists. You can add a new task.");
+            return;
+        }
+        Object.assign(task, values);
+    } else {
+        tasks.push({
+            id: `task-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            ...values,
+            completed: false,
+            favorite: false
+        });
+    }
+    const message = isEditing ? "Task updated." : "Task added.";
+    const saved = saveTasks(message);
+    resetTaskForm(form);
     form.querySelector("#task-form-status").textContent = saved
-        ? "Task added and saved in this browser."
-        : "Task added for this visit. Your browser could not save it.";
+        ? `${message} Saved in this browser.`
+        : `${message} Your browser could not save this change.`;
     form.querySelector("#task-title").focus();
 }
 
 function setupTaskForm(form) {
-    form.querySelector("#task-date").value = getLocalDate();
+    resetTaskForm(form);
+    form.querySelector("#task-cancel").addEventListener("click", () => {
+        resetTaskForm(form);
+        announce("Editing cancelled. The task was not changed.");
+        form.querySelector("#task-title").focus();
+    });
     form.querySelectorAll("input, select, textarea").forEach((field) => {
         const clearError = () => {
             showFieldError(field, "");
@@ -220,7 +272,7 @@ function setupTaskForm(form) {
             form.querySelector(".is-invalid")?.focus();
             return;
         }
-        addTask(form);
+        submitTask(form);
     });
 }
 
@@ -232,8 +284,30 @@ function toggleFavorite(taskId) {
 }
 
 function deleteTask(taskId) {
+    if (!getTaskById(taskId)) return;
+    if (editingTaskId === taskId) resetTaskForm(document.querySelector("#task-form"));
     tasks = tasks.filter((task) => task.id !== taskId);
     saveTasks("Task deleted.");
+}
+
+function setupTaskEditing(list, form) {
+    list.addEventListener("click", (event) => {
+        const button = event.target.closest(".task-edit");
+        if (button) startEditingTask(button.closest("[data-task-id]").dataset.taskId);
+    });
+    document.querySelector("#clear-tasks").addEventListener("click", () => {
+        if (!tasks.length || !window.confirm(`Delete all ${tasks.length} tasks? This cannot be undone.`)) return;
+        tasks = [];
+        resetTaskForm(form);
+        saveTasks("All tasks cleared.");
+    });
+    window.addEventListener("storage", (event) => {
+        if (event.key !== STORAGE.tasks && event.key !== null) return;
+        tasks = loadTasks();
+        if (editingTaskId && !getTaskById(editingTaskId)) resetTaskForm(form);
+        renderTasks();
+        announce("Tasks updated from another tab.");
+    });
 }
 
 function setupNativeTaskActions(list) {
@@ -260,6 +334,7 @@ function setupTasks() {
     populateCategoryFilters();
     setupTaskFilters();
     setupTaskForm(form);
+    setupTaskEditing(list, form);
     renderTasks();
     list.addEventListener("change", (event) => {
         const checkbox = event.target.closest('[data-action="complete"]');
@@ -305,4 +380,4 @@ function setupTaskJQuery() {
     });
 }
 
-export { setupTasks };
+export { setupTasks, getTasks, getCategoryLabel };

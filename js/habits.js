@@ -10,6 +10,10 @@ function validHabits(value) {
 
 const habits = readStorage(STORAGE.habits, defaultHabits, validHabits);
 
+function getHabits() {
+    return readStorage(STORAGE.habits, defaultHabits, validHabits);
+}
+
 function currentStreak(habit) {
     return habit.lastDoneDate >= addDays(getLocalDate(), -1) ? habit.streak : 0;
 }
@@ -59,4 +63,4 @@ function setupHabits() {
     });
 }
 
-export { setupHabits };
+export { setupHabits, getHabits };
