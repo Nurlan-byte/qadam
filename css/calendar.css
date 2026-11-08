@@ -1,175 +1,157 @@
-/*
-Qadam — calendar page (calendar.html)
-Week view, Events, Month table, Media queries
-*/
-
-/* Week view: one grid, 1 column of hour labels + 7 day columns.
-   Both rows share the same columns, so hours and days always line up */
-.cal-week {
-    display: grid;
-    grid-template-columns: 56px repeat(7, 1fr);
-    gap: 4px;
-    overflow-x: auto;         
-}
-
-.cal-day-head {
-    padding: 0.5rem 0;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.cal-day-head--today {
-    background-color: var(--surface-2);
-}
-
-.cal-day-name {
-    display: block;
-    color: var(--muted);
-    font-size: 0.8rem;
-}
-
-.cal-day-number {
-    display: block;
-    font-family: var(--font-head);
-    font-weight: 700;
-}
-
-.cal-hours {
+.calendar-toolbar {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.calendar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.calendar-help {
     color: var(--muted);
-    font-size: 0.75rem;
+    font-size: 0.85rem;
 }
-
-.cal-hour {
-    height: 64px;
-    line-height: 1;
-}
-
-.cal-day-column {
-    position: relative;      
-    height: 832px;
-    border-radius: 10px;
-    background-color: var(--surface-2);
-    background-image: repeating-linear-gradient(to bottom,
-            var(--line) 0 1px,
-            transparent 1px 64px);
-}
-
-.cal-event {
-    position: absolute;
-    left: 3px;
-    right: 3px;
-    overflow: hidden;
-    padding: 0.25rem 0.4rem;
-    border-radius: 8px;
-    border-left: 3px solid var(--done);
-    background-color: var(--done-soft);
-}
-
-.cal-event-title {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    font-weight: 700;
-    line-height: 1.15;
-}
-
-.cal-event-time {
-    margin: 0;
-    line-height: 1.1;
-    color: var(--ink);
-    font-size: 0.68rem;
-    opacity: 0.75;
-}
-
-.cal-s1200 { top: 256px; }
-.cal-s1305 { top: 325px; }
-.cal-s1400 { top: 384px; }
-.cal-s1500 { top: 448px; }
-.cal-s1600 { top: 512px; }
-.cal-s1700 { top: 576px; }
-.cal-s1800 { top: 640px; }
-
-.cal-d50 { height: 53px; }
-.cal-d60 { height: 64px; }
 
 .calendar-month {
-    position: relative;
-    --bs-table-bg: transparent;
-    --bs-table-color: var(--ink);
-    --bs-table-border-color: var(--line);
+    width: 100%;
     table-layout: fixed;
-    min-width: 560px;
+    border-collapse: separate;
+    border-spacing: 0.3rem;
 }
 
-.calendar-month caption {
-    caption-side: top;
-    padding-top: 0;
-    color: var(--muted);
-}
-
-.calendar-month thead th {
-    color: var(--muted);
-    font-weight: 500;
+.calendar-month th {
+    padding-bottom: 0.4rem;
     text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
-.calendar-day {
-    height: 68px;
+.calendar-month td {
+    padding: 0;
     vertical-align: top;
 }
 
-.calendar-day-number {
-    display: block;
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 0.9rem;
+.calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    width: 100%;
+    min-height: 5rem;
+    padding: 0.6rem 0.15rem;
+    border: 1px solid var(--line);
+    border-radius: 0.6rem;
+    color: var(--ink);
+    background-color: var(--surface-2);
+    font: inherit;
 }
 
-.calendar-day-muted .calendar-day-number {
+.calendar-day:hover {
+    border-color: var(--done);
+}
+
+.calendar-day-muted {
+    background-color: transparent;
     color: var(--muted);
-    font-weight: 500;
 }
 
-.calendar-day-today .calendar-day-number {
+.calendar-day[aria-current="date"] .calendar-day-number {
     color: var(--flame);
+    font-weight: 700;
+}
+
+.calendar-day[aria-pressed="true"] {
+    border-color: var(--done);
+    box-shadow: inset 0 0 0 2px var(--done);
 }
 
 .calendar-count {
-    display: inline-block;
-    margin-top: 0.3rem;
-    padding: 0.1rem 0.4rem;
-    border-radius: 6px;
+    max-width: 100%;
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.35rem;
+    color: var(--ink);
     background-color: var(--done-soft);
     font-size: 0.7rem;
+    overflow-wrap: anywhere;
 }
 
-@media (max-width: 992px) {
-    .cal-week {
-        grid-template-columns: 48px repeat(7, minmax(96px, 1fr));
-    }
-
-    .cal-hours {
-        font-size: 0.7rem;
-    }
+.calendar-task-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
 }
 
-@media (max-width: 576px) {
-    .cal-week {
-        grid-template-columns: 48px 1fr;
+.calendar-task {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.calendar-task-time {
+    min-width: 4.5rem;
+    color: var(--flame);
+    font-size: 0.85rem;
+}
+
+.calendar-task-content {
+    flex: 1 1 10rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.calendar-task-content h3 {
+    margin: 0 0 0.3rem;
+    font: inherit;
+    font-weight: 700;
+}
+
+.calendar-task-content p,
+.calendar-task-link {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.calendar-task-content p {
+    color: var(--muted);
+}
+
+.calendar-task-completed h3 {
+    text-decoration: line-through;
+    color: var(--muted);
+}
+
+@media (max-width: 575.98px) {
+    .calendar-month {
+        border-spacing: 0.15rem;
     }
 
-    .cal-day-head:not(.cal-day-head--today),
-    .cal-day-column:not(.cal-day-column--today) {
-        display: none;
+    .calendar-month th {
+        font-size: 0.65rem;
     }
 
     .calendar-day {
-        height: 56px;
+        min-height: 3.5rem;
+        padding: 0.35rem 0;
+        border-radius: 0.35rem;
+        font-size: 0.8rem;
     }
 
     .calendar-count {
-        font-size: 0.62rem;
+        padding: 0.05rem 0.2rem;
+        font-size: 0.6rem;
+    }
+
+    .calendar-count-word {
+        display: none;
     }
 }
