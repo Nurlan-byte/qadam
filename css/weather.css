@@ -1,0 +1,47 @@
+.weather-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: end;
+    margin: 1rem 0;
+}
+
+.weather-toolbar .form-select {
+    min-width: 12rem;
+}
+
+.weather-days {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 1rem;
+}
+
+.weather-day {
+    padding: 1rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.weather-day h3 {
+    font-size: 1rem;
+}
+
+.weather-temperature {
+    font-weight: 700;
+    color: var(--done);
+}
+
+.weather-summary, .weather-hint, .weather-source {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.weather-hint {
+    margin-bottom: 0;
+}
+
+.weather-source {
+    margin: 1rem 0 0;
+}
