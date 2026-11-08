@@ -1,6 +1,8 @@
 # Qadam
 
-Qadam is a responsive task and habit tracker for Web Technologies 1. This final version continues the same midterm and endterm website using plain HTML, CSS, Bootstrap, JavaScript modules and jQuery.
+Qadam is a responsive task and habit tracker for Web Technologies 1, built with plain HTML, CSS, Bootstrap, JavaScript modules and jQuery.
+
+[Live site](https://nurlan-byte.github.io/qadam/) · [Repository](https://github.com/Nurlan-byte/qadam)
 
 ## Run locally
 
@@ -26,20 +28,17 @@ Open `http://localhost:8000`. No build step or package installation is needed. U
 
 Calendar reads the same saved tasks as Today. Habits and Today share dated check-ins, and Statistics reflects the same saved state. Changes in another browser tab update the relevant views. New users start with no habit history; older saved streak counts are preserved without inventing missing historical dates.
 
-## Final additions
+## Features
 
 1. **Weather API:** five-day forecasts for Almaty, Astana and Shymkent, with loading, success, empty and error states, refresh, request cancellation and a timeout.
 2. **Object-oriented JavaScript:** `ForecastDay` instances hold each forecast day's properties and calculate its date label, temperature range, weather summary and planning hint. Multiple instances are used to render actual API data.
 3. **Full task CRUD:** edit existing tasks, cancel editing, and clear all tasks with confirmation. Editing preserves each task's identity, completion and favorite flags.
 4. **Statistics dashboard:** real task/category and focus-time charts, completion rate and habit check-ins. It refreshes after changes, when returning to the page, and when another tab updates saved data.
 5. **Accessible text-size preference:** choose 100%, 112% or 125% text size, preserved across pages and reloads, alongside the existing theme control.
+6. **Task calendar:** a Monday-first month view with previous/next month, Today, selected-day task details and keyboard navigation.
+7. **Recorded habit history:** shared daily check-ins, current-week counts and a rolling 28-day history. Only saved dates are shown; older streak counters are migrated separately.
 
-Task, habit, theme and focus-session storage already existed in endterm. Final extends persistence to new city and text-size preferences, completes task update/clear flows, and connects storage changes to the dashboard. Existing storage is not counted again as a new feature.
-
-## Additional final improvements
-
-- **Task calendar:** a Monday-first month view with previous/next month, Today, selected-day task details and keyboard navigation.
-- **Recorded habit history:** shared daily check-ins, current-week counts and a rolling 28-day history. Only saved dates are shown; older streak counters are migrated separately.
+Search, category/status filters, favorites, form validation, jQuery details/deletion effects, the focus timer, theme control and countdown are integrated into the same application.
 
 ## API
 
@@ -73,25 +72,24 @@ Saved data stays in this browser and device. There is no backend or account sync
 
 Missing values use starter defaults. Invalid data is handled without breaking the page. An empty saved task array remains empty. If the browser refuses a save, the page shows a warning and tells the user that the change is only available for the current visit. Clear tasks affects tasks only; other preferences and focus history remain.
 
-## Team and versions
+## Team
 
-| Account | Endterm responsibility | Final responsibility |
-| --- | --- | --- |
-| adilzhandev | Shared data/helpers, habit check-ins and integration | Forecast model, weather API and integration |
-| AsylStyle | Theme, focus timer, countdown and responsive pages | Statistics, task calendar, text-size accessibility and responsive polish |
-| Nurlan-byte | Task interactions, form validation and acceptance checks | Full task CRUD, dated habit history, persistence and final checks |
+| Account | Responsibility |
+| --- | --- |
+| adilzhandev | Shared helpers, forecast model, weather API and application integration |
+| AsylStyle | Theme, timer, countdown, calendar, statistics, text-size accessibility and responsive layout |
+| Nurlan-byte | Task CRUD, form validation, jQuery interactions, dated habit history and persistence |
 
-- `project/endterm`, tag `endterm-v1`: the completed endterm stage.
-- `final-v1`: the first completed final stage.
-- `project/final`, tag `final-v2`: the final stage including the live calendar, dated habit history and defence guide.
-- Endterm has three main commits per account. Final contributions are split by the responsibilities above, with a separate release-documentation commit. Git author names and emails match the identities already used in this repository.
+All three members review the complete application and prepare to explain its implementation.
 
-See [ENDTERM.md](ENDTERM.md) and [FINAL.md](FINAL.md) for requirement maps and acceptance scenarios. [DEFENSE.md](DEFENSE.md) contains a Russian demo script, responsibilities and questions with answers. [SUBMISSION.md](SUBMISSION.md) contains the repository links for submission.
+## Project documentation
+
+- [REQUIREMENTS.md](REQUIREMENTS.md): implementation checklist and manual acceptance checks.
+- [DEFENSE.md](DEFENSE.md): Russian demonstration script and questions with answers.
+- [SUBMISSION.md](SUBMISSION.md): repository and live-site links for submission.
 
 ## Publication
 
 Live site: [Qadam on GitHub Pages](https://nurlan-byte.github.io/qadam/).
 
-GitHub Pages publishes the repository root from `main` through the existing Pages build/deployment workflow. The source development branch is `project/final`. To publish an update, merge its reviewed changes into `main`, push and wait for the Pages workflow to complete. Verify the live pages after deployment.
-
-The endterm branch and `endterm-v1` tag remain available for separate submission. `final-v2` preserves the final application with the dynamic calendar, dated habits and defence material.
+GitHub Pages publishes the repository root from `main` through the Pages build/deployment workflow. Merge reviewed changes into `main`, wait for the deployment to complete and verify the live pages. The repository and website represent one Qadam project.
