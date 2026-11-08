@@ -17,7 +17,12 @@ function readTextSize() {
 function setupTextSize(themeButton) {
     const controls = document.createElement("div");
     controls.className = "appearance-controls";
-    themeButton.before(controls);
+    const sidebarMenu = themeButton.closest(".sidebar")?.querySelector(".navbar-collapse");
+    if (sidebarMenu) {
+        sidebarMenu.append(controls);
+    } else {
+        themeButton.before(controls);
+    }
     controls.append(themeButton);
 
     const field = document.createElement("div");
