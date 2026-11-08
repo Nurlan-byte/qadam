@@ -6,7 +6,7 @@ const STORAGE = {
 };
 
 function getLocalDate(date = new Date()) {
-    const year = date.getFullYear();
+    const year = String(date.getFullYear()).padStart(4, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
@@ -20,6 +20,7 @@ function addDays(dateString, amount) {
 
 function isValidDate(value) {
     if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    if (value.startsWith("0000")) return false;
     const date = new Date(`${value}T12:00:00`);
     return Number.isFinite(date.getTime()) && getLocalDate(date) === value;
 }
@@ -53,6 +54,7 @@ function readStorage(key, fallback, validate = () => true) {
 function writeStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
+        document.dispatchEvent(new CustomEvent("qadam:data-changed", { detail: { key } }));
         return true;
     } catch (error) {
         showStorageWarning("Changes could not be saved in this browser. They will last only while this page stays open.");
