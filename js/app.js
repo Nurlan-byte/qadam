@@ -1,3 +1,5 @@
+import { setupStatistics } from "./statistics.js";
+import { setupWeather } from "./weather.js";
 import { setupTheme } from "./theme.js";
 import { setupTasks } from "./tasks.js";
 import { setupHabits } from "./habits.js";
@@ -9,3 +11,7 @@ setupTasks();
 setupHabits();
 setupCountdowns();
 setupFocusTimer();
+
+setupWeather();
+
+setupStatistics();

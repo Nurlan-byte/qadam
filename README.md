@@ -1,68 +1,86 @@
 # Qadam
 
-Qadam is a responsive task and habit tracker. The endterm version continues the group's Web Technologies 1 midterm project and adds interactive task management, habit check-ins, a focus timer, and a theme switcher.
-
-**Live site:** https://nurlan-byte.github.io/qadam/
-
-## Pages
-
-- Home — project overview and navigation
-- Today — tasks, search and filters, favorites, task form, and habit check-ins
-- Calendar — weekly schedule and monthly overview
-- Habits — habit history and streak visualizations
-- Focus — Pomodoro timer and locally stored session statistics
-- Countdown — event dates with automatically calculated remaining days
-
-## Endterm features
-
-- Tasks are rendered from JavaScript arrays. Add, complete, favorite, search, filter, expand details, and delete tasks on the Today page.
-- The task form checks the title length, due date, and list selection. It shows field-specific errors and a success message.
-- Tasks, habit check-ins, theme choice, and completed focus sessions are saved in the browser with `localStorage`.
-- Habit check-ins update the completion count and streak on Today.
-- The theme switcher works across all pages.
-- The Focus page provides a 25-minute start, pause, and reset timer and updates daily and weekly statistics after a completed session.
-- Countdown values are calculated from event dates, including events that have already passed.
-- jQuery powers task favorite and delete actions and the task-details disclosure animation.
+Qadam is a responsive task and habit tracker for Web Technologies 1. This final version continues the same midterm and endterm website using plain HTML, CSS, Bootstrap, JavaScript modules and jQuery.
 
 ## Run locally
 
-Open the `qadam` folder with a local static server such as the VS Code Live Server extension. The website also uses Bootstrap, Bootstrap Icons, Google Fonts, and jQuery from public CDNs, so an internet connection is needed for those resources.
+From the repository directory run:
 
-## Try the interactive features
+```sh
+python3 -m http.server 8000
+```
 
-1. Open **Today**. Submit an empty task or a title shorter than three characters to see the validation messages. Then add a valid task and confirm it appears in the correct date group.
-2. Search for part of a task title, choose a list or status, and switch **Show favorites** on and off.
-3. Complete a task, expand its details, favorite it, delete it, then refresh the page to confirm the remaining task data is saved.
-4. Check in a habit and reload Today to confirm the check-in remains.
-5. Switch the theme, navigate to another page, and reload to confirm the preference remains.
-6. On **Focus**, start the timer, pause it, and reset it. For a full demo, let a 25-minute session finish; the daily and weekly session totals will update.
-7. Open **Countdown** and check that each displayed value reflects the event date. Past dates are labelled as elapsed days.
-8. At a narrow viewport, open the navigation menu and confirm the pages remain accessible.
+Open `http://localhost:8000`. No build step or package installation is needed. Use an HTTP server because JavaScript modules are restricted on `file://` URLs. Internet access is needed for the Bootstrap, Bootstrap Icons, Google Fonts and jQuery CDNs, and for the weather service. Core task buttons also have a native JavaScript fallback if jQuery is unavailable.
 
-## Implementation notes
+## Pages
 
-- `js/app.js` starts the page modules. Each module exits when its controls are absent.
-- `js/tasks.js` handles task data, rendering, search, validation, favorites and jQuery actions.
-- `js/habits.js`, `js/focus.js`, `js/countdown.js` and `js/theme.js` each handle one feature.
-- `js/shared.js` contains date, storage and display helpers; `js/data.js` contains starter records.
-- `css/app.css` contains shared styles for the new controls and light theme.
-- Native JavaScript handles form submission, validation, search, filters, task completion, habit check-ins, theme changes, and focus timing. jQuery is loaded on Today for delegated task actions and effects.
-- There is no backend or account sync. Saved data stays in the current browser and device; clearing site data removes it.
+| Page | Purpose |
+| --- | --- |
+| Home | Overview and navigation |
+| Today | Create, read, edit and delete tasks; search, filters, favorites and daily habit check-ins |
+| Calendar | Original calendar layout plus a live five-day weather planner |
+| Habits | Original midterm habit-history layout; interactive check-ins remain on Today |
+| Focus | Start, pause, resume and reset a 25-minute timer; save completed sessions |
+| Countdown | Remaining days for the existing event dates |
+| Statistics | Current task completion, tasks by category, habit check-ins and last-seven-day focus totals |
 
-## Team
+The original calendar and habit-history grids are retained examples from midterm. They are not synchronized task/history views. Today and Statistics show the current saved data.
 
-The original midterm pages are preserved. Endterm responsibilities:
+## Final additions
 
-- **adilzhandev** — shared data and helpers, habit check-ins, module structure and integration.
-- **AsylStyle** — theme, focus timer, countdown, responsive layout and visual checks.
-- **Nurlan-byte** — task interactions and validation, accessible form feedback, endterm checks.
+1. **Weather API:** five-day forecasts for Almaty, Astana and Shymkent, with loading, success, empty and error states, refresh, request cancellation and a timeout.
+2. **Object-oriented JavaScript:** `ForecastDay` instances hold each forecast day's properties and calculate its date label, temperature range, weather summary and planning hint. Multiple instances are used to render actual API data.
+3. **Full task CRUD:** edit existing tasks, cancel editing, and clear all tasks with confirmation. Editing preserves each task's identity, completion and favorite flags.
+4. **Statistics dashboard:** real task/category and focus-time charts, completion rate and habit check-ins. It refreshes after changes, when returning to the page, and when another tab updates saved data.
+5. **Accessible text-size preference:** choose 100%, 112% or 125% text size, preserved across pages and reloads, alongside the existing theme control.
 
-See [ENDTERM.md](ENDTERM.md) for the requirements map and defence checklist.
+Task, habit, theme and focus-session storage already existed in endterm. Final extends persistence to new city and text-size preferences, completes task update/clear flows, and connects storage changes to the dashboard. Existing storage is not counted again as a new feature.
 
-## Endterm version
+## API
 
-The `project/endterm` branch and `endterm-v1` tag identify this stage. The repository uses plain HTML, CSS, Bootstrap, JavaScript modules and jQuery; there is no build step. Serve it over HTTP rather than opening files directly, because browsers restrict ES module loading from `file://` URLs.
+The Calendar page uses the public [Open-Meteo Weather Forecast API](https://open-meteo.com/en/docs), specifically `https://api.open-meteo.com/v1/forecast`.
 
-From the repository folder, run `python3 -m http.server 8000` and visit `http://localhost:8000`.
+- Parameters: city latitude/longitude, five forecast days, automatic timezone, daily minimum/maximum temperature and WMO weather code.
+- `fetch` and `async/await` retrieve JSON; `createForecastDays` validates it before creating objects.
+- The page displays Celsius temperatures, city-local dates and source attribution.
+- No secret API key is stored in this repository. Network failures and invalid responses leave a visible retry control.
 
-The published link above belongs to the existing project. Local changes appear there only after the appropriate version is deployed.
+## Source layout
+
+| File | Responsibility |
+| --- | --- |
+| `js/app.js` | Start each page's setup function |
+| `js/shared.js` | Date helpers, storage helpers, escaping and announcements |
+| `js/data.js` | Starter tasks, categories and habits |
+| `js/tasks.js` | Task state, rendering, search, validation, CRUD and jQuery effects |
+| `js/habits.js` | Daily check-ins and streak handling |
+| `js/focus.js` | Deadline-based focus timer and saved session totals |
+| `js/countdown.js` | Date differences for event cards |
+| `js/theme.js` | Theme and text-size preferences |
+| `js/weather-model.js` | ForecastDay class and response validation |
+| `js/weather.js` | Forecast requests and weather-card rendering |
+| `js/statistics.js` | Summary values and accessible bar charts |
+
+## Storage
+
+Saved data stays in this browser and device. There is no backend or account synchronization. Keys are `qadam-tasks`, `qadam-habits`, `qadam-focus-sessions`, `qadam-theme`, `qadam-text-size` and `qadam-weather-city`.
+
+Missing values use starter defaults. Invalid data is handled without breaking the page. An empty saved task array remains empty. If the browser refuses a save, the page shows a warning and tells the user that the change is only available for the current visit. Clear tasks affects tasks only; other preferences and focus history remain.
+
+## Team and versions
+
+| Account | Endterm responsibility | Final responsibility |
+| --- | --- | --- |
+| adilzhandev | Shared data/helpers, habit check-ins and integration | Forecast model, weather API and integration |
+| AsylStyle | Theme, focus timer, countdown and responsive pages | Statistics, text-size accessibility and responsive polish |
+| Nurlan-byte | Task interactions, form validation and acceptance checks | Full task CRUD, storage update/clear flows and final checks |
+
+- `project/endterm`, tag `endterm-v1`: the completed endterm stage.
+- `project/final`, tag `final-v1`: the completed final stage.
+- Each stage has three main commits per account. Git author names and emails match the identities already used in this repository.
+
+See [ENDTERM.md](ENDTERM.md) and [FINAL.md](FINAL.md) for requirement maps and defence scenarios.
+
+## Publication
+
+The existing repository site is [Qadam on GitHub Pages](https://nurlan-byte.github.io/qadam/). The local version is not automatically deployed by creating commits. To publish this stage, push the selected branch and configure GitHub Pages to serve its repository root, or merge the reviewed stage into the branch already used by Pages. Keep the endterm tag available for separate submission.
