@@ -17,9 +17,9 @@ const defaultTasks = [
 ];
 
 const defaultHabits = [
-    { id: "habit-water", title: "Drink a glass of water", period: "Morning", streak: 12, lastDoneDate: addDays(today, -1) },
-    { id: "habit-stretch", title: "Stretch for five minutes", period: "Afternoon", streak: 3, lastDoneDate: addDays(today, -1) },
-    { id: "habit-read", title: "Read 20 pages", period: "Evening", streak: 5, lastDoneDate: addDays(today, -1) }
+    { id: "habit-water", title: "Drink a glass of water", period: "Morning", streak: 0, lastDoneDate: "", dates: [] },
+    { id: "habit-stretch", title: "Stretch for five minutes", period: "Afternoon", streak: 0, lastDoneDate: "", dates: [] },
+    { id: "habit-read", title: "Read 20 pages", period: "Evening", streak: 0, lastDoneDate: "", dates: [] }
 ];
 
 export { categories, defaultTasks, defaultHabits };

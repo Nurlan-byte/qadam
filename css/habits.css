@@ -345,3 +345,74 @@
     align-items: flex-start;
   }
 }
+.habits-page .habit-card-text {
+  padding-right: 0;
+}
+
+.habits-page .habit-card .form-check-input {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.15rem;
+}
+
+.habit-run {
+  margin: 0.65rem 0 0;
+  color: var(--flame);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.habit-history-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.habit-history-day {
+  display: flex;
+  min-height: 4.5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.habit-history-day time {
+  font-size: 0.8rem;
+}
+
+.habit-history-day > span {
+  font-weight: 700;
+}
+
+.habit-history-day.habit-level-2,
+.habit-history-day.habit-level-3 {
+  color: var(--bg);
+  opacity: 1;
+}
+
+.habit-history-today {
+  outline: 2px solid var(--flame);
+  outline-offset: 1px;
+}
+
+@media (max-width: 576px) {
+  .habit-history-grid {
+    gap: 0.25rem;
+  }
+
+  .habit-history-day {
+    min-height: 3.5rem;
+    border-radius: 5px;
+  }
+
+  .habit-history-day time {
+    font-size: 0.65rem;
+  }
+}
