@@ -18,13 +18,13 @@ Open `http://localhost:8000`. No build step or package installation is needed. U
 | --- | --- |
 | Home | Overview and navigation |
 | Today | Create, read, edit and delete tasks; search, filters, favorites and daily habit check-ins |
-| Calendar | Original calendar layout plus a live five-day weather planner |
-| Habits | Original midterm habit-history layout; interactive check-ins remain on Today |
+| Calendar | Current task calendar with month navigation, selected-day tasks and a live five-day weather planner |
+| Habits | Daily check-ins, the current week and 28 days of genuinely recorded history |
 | Focus | Start, pause, resume and reset a 25-minute timer; save completed sessions |
 | Countdown | Remaining days for the existing event dates |
 | Statistics | Current task completion, tasks by category, habit check-ins and last-seven-day focus totals |
 
-The original calendar and habit-history grids are retained examples from midterm. They are not synchronized task/history views. Today and Statistics show the current saved data.
+Calendar reads the same saved tasks as Today. Habits and Today share dated check-ins, and Statistics reflects the same saved state. Changes in another browser tab update the relevant views. New users start with no habit history; older saved streak counts are preserved without inventing missing historical dates.
 
 ## Final additions
 
@@ -35,6 +35,11 @@ The original calendar and habit-history grids are retained examples from midterm
 5. **Accessible text-size preference:** choose 100%, 112% or 125% text size, preserved across pages and reloads, alongside the existing theme control.
 
 Task, habit, theme and focus-session storage already existed in endterm. Final extends persistence to new city and text-size preferences, completes task update/clear flows, and connects storage changes to the dashboard. Existing storage is not counted again as a new feature.
+
+## Additional final improvements
+
+- **Task calendar:** a Monday-first month view with previous/next month, Today, selected-day task details and keyboard navigation.
+- **Recorded habit history:** shared daily check-ins, current-week counts and a rolling 28-day history. Only saved dates are shown; older streak counters are migrated separately.
 
 ## API
 
@@ -53,7 +58,8 @@ The Calendar page uses the public [Open-Meteo Weather Forecast API](https://open
 | `js/shared.js` | Date helpers, storage helpers, escaping and announcements |
 | `js/data.js` | Starter tasks, categories and habits |
 | `js/tasks.js` | Task state, rendering, search, validation, CRUD and jQuery effects |
-| `js/habits.js` | Daily check-ins and streak handling |
+| `js/habits.js` | Dated check-ins, migration of older records, streaks and history rendering |
+| `js/calendar.js` | Month layout, date selection, task counts and selected-day details |
 | `js/focus.js` | Deadline-based focus timer and saved session totals |
 | `js/countdown.js` | Date differences for event cards |
 | `js/theme.js` | Theme and text-size preferences |
@@ -72,15 +78,18 @@ Missing values use starter defaults. Invalid data is handled without breaking th
 | Account | Endterm responsibility | Final responsibility |
 | --- | --- | --- |
 | adilzhandev | Shared data/helpers, habit check-ins and integration | Forecast model, weather API and integration |
-| AsylStyle | Theme, focus timer, countdown and responsive pages | Statistics, text-size accessibility and responsive polish |
-| Nurlan-byte | Task interactions, form validation and acceptance checks | Full task CRUD, storage update/clear flows and final checks |
+| AsylStyle | Theme, focus timer, countdown and responsive pages | Statistics, task calendar, text-size accessibility and responsive polish |
+| Nurlan-byte | Task interactions, form validation and acceptance checks | Full task CRUD, dated habit history, persistence and final checks |
 
 - `project/endterm`, tag `endterm-v1`: the completed endterm stage.
-- `project/final`, tag `final-v1`: the completed final stage.
-- Each stage has three main commits per account. Git author names and emails match the identities already used in this repository.
+- `final-v1`: the first completed final stage.
+- `project/final`, tag `final-v2`: the final stage including the live calendar, dated habit history and defence guide.
+- Endterm has three main commits per account; final has four per account. Git author names and emails match the identities already used in this repository.
 
-See [ENDTERM.md](ENDTERM.md) and [FINAL.md](FINAL.md) for requirement maps and defence scenarios.
+See [ENDTERM.md](ENDTERM.md) and [FINAL.md](FINAL.md) for requirement maps and acceptance scenarios. [DEFENSE.md](DEFENSE.md) contains a Russian demo script, responsibilities and questions with answers. [SUBMISSION.md](SUBMISSION.md) contains the repository links for submission.
 
 ## Publication
 
-The existing repository site is [Qadam on GitHub Pages](https://nurlan-byte.github.io/qadam/). The local version is not automatically deployed by creating commits. To publish this stage, push the selected branch and configure GitHub Pages to serve its repository root, or merge the reviewed stage into the branch already used by Pages. Keep the endterm tag available for separate submission.
+The existing [GitHub Pages site](https://nurlan-byte.github.io/qadam/) is published from `main`. The prepared final version is on `project/final`; it has not been moved to the publishing branch. To publish later, merge the reviewed final version into `main`, push it and wait for the existing Pages build/deployment workflow to finish. Then verify the live site.
+
+Until publication, review or submit the [final branch](https://github.com/Nurlan-byte/qadam/tree/project/final). The endterm branch and tags stay available for separate submission.

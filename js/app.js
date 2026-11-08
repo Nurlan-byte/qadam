@@ -1,3 +1,4 @@
+import { setupCalendar } from "./calendar.js";
 import { setupStatistics } from "./statistics.js";
 import { setupWeather } from "./weather.js";
 import { setupTheme } from "./theme.js";
@@ -13,5 +14,6 @@ setupCountdowns();
 setupFocusTimer();
 
 setupWeather();
+setupCalendar();
 
 setupStatistics();
