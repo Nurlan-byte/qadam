@@ -47,15 +47,18 @@ The loop requirement is two appropriate examples, not necessarily two different 
 | Keep secret API keys out of public code | The selected public Open-Meteo endpoint needs no secret key in the repository |
 | At least one meaningful class with constructor, properties and methods | `ForecastDay` stores a date, minimum/maximum temperature and weather code, and provides formatting, summary and planning methods |
 | Multiple objects used in real functionality | `createForecastDays` creates a separate `ForecastDay` object for each displayed day; `buildForecastCard` uses its methods |
-| Meaningful persistent browser data | Tasks, habits, focus sessions, theme, text size and selected weather city use `localStorage` |
+| Meaningful persistent browser data | Tasks, habits, events, focus history/current timer, theme, text size and weather city use `localStorage` |
 | Restore, update and clear saved data | Data is restored on loading; CRUD and preferences update it; Clear tasks explicitly stores an empty array |
 | Structured JSON and safe invalid-data handling | Shared storage helpers catch parse/save errors; modules validate stored values and records |
 | At least two features from the additional-feature choices | Full task CRUD, meaningful statistics and persisted accessibility preferences provide three choices |
-| Full CRUD | Create/read/update/delete tasks, cancel editing and clear all with confirmation; editing preserves ID and completion/favorite flags |
+| Full CRUD | Tasks, habits and events have create/read/update/delete flows; editing retains record IDs, task flags and habit history |
 | Meaningful data visualization | Completion summary, tasks-by-category chart and seven-day focus-minute chart use current saved records |
 | Persisted accessibility preference | Text size 100%, 112% or 125%; labeled controls, keyboard access and readable numeric chart labels |
 | Connected task calendar | Monday-first month grid, selected-day tasks, date navigation, keyboard controls and cross-tab refresh |
 | Recorded habit history | Shared Today/Habits check-ins, current week and 28-day history; legacy streak counters do not invent dates |
+| Persistent focus session | Saved running deadline or paused remainder; completion is reconciled on revisit and deduplicated by session ID |
+| Latest task deletion Undo | One in-memory deleted task can be restored on the current Today page; this is not a general undo history |
+| JSON backup | Versioned, validated export/import of four collections, count preview, confirmed replacement and attempted rollback after a write failure |
 
 Five substantial capabilities are identifiable separately: API integration, OOP used by the forecast, full CRUD, the statistics dashboard and persisted text-size accessibility. Local storage supports the application as a whole and is not counted repeatedly as different features. Calendar and recorded habit history add further integrated functionality.
 
@@ -86,7 +89,9 @@ Use a separate browser profile or disposable test context. Do not clear or corru
 3. Expand/collapse details and delete a test task. Observe jQuery effects. With the jQuery request blocked in a test context, basic favorite/details/delete actions still work.
 4. Edit a task's title/date/notes, save and reload. Values persist without duplicating its ID or losing completion/favorite flags.
 5. Edit again and cancel: the record is unchanged. Delete the record currently being edited: the form returns to add mode.
-6. Cancel Clear tasks and verify no change. In the disposable profile, confirm it and reload: the task array remains empty; habits and preferences are unaffected.
+6. Delete one test task and Undo: its ID, fields, completion/favorite flags and original list position return. Delete a second task before Undo: only that latest deletion is available.
+7. Verify that changing an unrelated task does not lose Undo, while reload/navigation, another tab's task change and a backup import invalidate it. Restoring must never overwrite an already existing ID.
+8. Cancel Clear tasks and verify no change. In the disposable profile, confirm it and reload: the task array remains empty; habits/preferences are unaffected and Clear tasks has no Undo.
 
 ### Weather API and objects
 
@@ -104,13 +109,32 @@ Use a separate browser profile or disposable test context. Do not clear or corru
 4. In a fresh profile, Habits has no invented check-in history. Check a habit on Today; Habits shows the same checkbox, current-day count and dated history. Undo from Habits and verify Today updates.
 5. Reload, then repeat check/uncheck. Dates persist and streaks do not inflate. A missed day breaks the active streak.
 6. With isolated legacy records, preserve the old streak baseline separately and display only known dates. Duplicate/future dates must not fabricate recorded activity.
+7. Create a habit with a 1–80-character nonblank name and Morning/Afternoon/Evening period. Invalid fields show messages. Editing name/period preserves its ID, check-ins and legacy streak metadata; cancel makes no change.
+8. Cancel habit deletion, then confirm it for a disposable habit: the habit and its history disappear from Today, Habits and Statistics. Deleting the last habit saves `[]`; it remains empty after reload. Habit deletion has no Undo.
+
+### Event management
+
+1. On Countdown create an event with a 3–80-character title, valid date, description up to 240 characters, allowed category and preset image. Validate errors and verify the new card/countdown.
+2. Edit the event and cancel, then save a change and reload. Identity and saved values remain consistent. Events are managed on Countdown; they are not Calendar tasks.
+3. Cancel deletion, then confirm it. Deleting the last event saves an empty array instead of resurrecting starter events. Changes synchronize across tabs; deletion has no Undo.
+4. Test invalid records and duplicate IDs in an isolated context. Confirm a visible safe state without silently overwriting the original stored data; denied writes keep a temporary change and show a warning.
 
 ### Focus, countdown and statistics
 
-1. Start, pause, resume and reset Focus. Pause keeps the remaining time; reset returns to 25 minutes. A completed session is saved once, and Start another session begins a new 25-minute session.
-2. Verify countdown output before, on and after an event date, using a disposable clock/date test when necessary.
-3. Compare Statistics with actual task totals, category counts and habit check-ins. The completion rate is 0% for an empty task list.
-4. Change data in another tab and return to Statistics. Values update; the last-seven-day chart includes actual saved minutes for those dates and excludes older/future sessions.
+1. Start Focus, leave the page or reload and return: the remaining time reflects the saved deadline. Pause, reload and resume: the saved remainder is preserved. Reset returns to 25 minutes.
+2. Let a session expire while away. On revisit, exactly one completed record is added using the deadline's date. Repeated visits/tabs must not duplicate its ID. Start another session begins at 25 minutes.
+3. In isolated storage-failure tests, fail the completed-session write and retry on returning; fail the timer-state write after history succeeds and verify no duplicate completion. The application does not claim that closed-browser JavaScript keeps running.
+4. Verify countdown output before, on and after an event date, using a disposable clock/date test when necessary.
+5. Compare Statistics with actual task totals, category counts and habit check-ins. The completion rate is 0% for an empty task list.
+6. Change data in another tab and return to Statistics. Values update; the last-seven-day chart includes actual saved minutes for those dates and excludes older/future sessions.
+
+### Backup export and import
+
+1. Export from Statistics and retain the file. It contains `app: "qadam"`, version 1, an export timestamp and tasks/habits/events/completed focus sessions, including record IDs.
+2. Select it for import and compare preview counts. Cancel: no saved values change. Confirm in the test profile: the four datasets are replaced, the active timer resets and pending task Undo clears.
+3. Reload and compare records, history and IDs with the file. Theme, text size and weather-city settings remain unchanged; these preferences and the active timer are not backed up.
+4. Reject malformed JSON, unsupported versions, missing collections, invalid fields, duplicate IDs, files over 2 MB and collections over 10,000 records before replacement.
+5. Simulate a write failure partway through import: previous values should be restored where storage permits. If storage also blocks rollback, show that recovery failed rather than claiming the original data is intact.
 
 ### Storage resilience
 

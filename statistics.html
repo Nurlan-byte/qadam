@@ -116,6 +116,23 @@
             </section>
         </div>
 
+        <section class="panel mt-4" id="backup-panel" aria-labelledby="backup-title">
+            <h2 class="h5" id="backup-title">Backup and restore</h2>
+            <p>Keep a copy of your tasks, habit history, events and completed focus sessions, or move them to another browser.</p>
+            <button class="btn btn-qadam mb-3" id="backup-export" type="button">Export backup</button>
+            <div>
+                <label class="form-label" for="backup-file">Choose a backup to import</label>
+                <input class="form-control" id="backup-file" type="file" accept=".json,application/json" aria-describedby="backup-help">
+                <p class="stats-detail mt-2" id="backup-help">JSON file, up to 2 MB. Import replaces your saved data and resets any active focus timer. Export your current data first if you want to keep it. Your theme and text size stay the same.</p>
+            </div>
+            <p class="mt-3" id="backup-preview" hidden></p>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <button class="btn btn-outline-light" id="backup-import" type="button" disabled>Replace saved data</button>
+                <button class="btn btn-outline-light" id="backup-cancel" type="button" hidden>Cancel import</button>
+            </div>
+            <p class="stats-detail mt-3" id="backup-status" role="status" aria-live="polite"></p>
+        </section>
+
         <footer class="app-footer">
             <p class="mb-0">&copy; 2026 Qadam. Web Technologies 1.</p>
         </footer>
