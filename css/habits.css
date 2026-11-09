@@ -416,3 +416,27 @@
     font-size: 0.65rem;
   }
 }
+
+.habit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.habit-form-panel .form-control,
+.habit-form-panel .form-select {
+  background-color: var(--surface-2);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.habit-form-panel .form-control:focus,
+.habit-form-panel .form-select:focus {
+  border-color: var(--done);
+  box-shadow: 0 0 0 3px var(--done-soft);
+}
+
+.habit-form-panel .is-invalid {
+  border-color: #d76e5f;
+}

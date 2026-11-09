@@ -68,6 +68,34 @@
 
         <p id="app-status" class="task-status" role="status" aria-live="polite"></p>
 
+        <section class="panel mb-4 habit-form-panel" aria-labelledby="habit-form-title">
+            <h2 id="habit-form-title" class="h5 mb-3">New habit</h2>
+            <form id="habit-form" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label for="habit-title" class="form-label">Title</label>
+                        <input id="habit-title" name="title" class="form-control" type="text" maxlength="80" aria-describedby="habit-title-error" placeholder="A small step to repeat each day">
+                        <small id="habit-title-error" class="field-error"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="habit-period" class="form-label">Time of day</label>
+                        <select id="habit-period" name="period" class="form-select" aria-describedby="habit-period-error">
+                            <option value="">Choose a time</option>
+                            <option value="Morning">Morning</option>
+                            <option value="Afternoon">Afternoon</option>
+                            <option value="Evening">Evening</option>
+                        </select>
+                        <small id="habit-period-error" class="field-error"></small>
+                    </div>
+                </div>
+                <div class="habit-actions">
+                    <button id="habit-submit" class="btn btn-qadam" type="submit">Add habit</button>
+                    <button id="habit-cancel" class="btn btn-outline-light" type="button" hidden>Cancel editing</button>
+                </div>
+                <p id="habit-form-status" class="form-success mt-3 mb-0" role="status" aria-live="polite"></p>
+            </form>
+        </section>
+
         <section class="mb-4" aria-labelledby="habit-list-title">
             <h2 id="habit-list-title" class="h5 mb-3">Today's check-ins <span id="habit-checkin-count" class="text-secondary">0 done</span></h2>
             <p class="text-secondary">Check a habit here or on Today. Your recorded dates stay in this browser.</p>

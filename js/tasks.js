@@ -4,17 +4,20 @@ import { categories, defaultTasks } from "./data.js";
 let tasks = loadTasks();
 let favoritesOnly = false;
 let editingTaskId = null;
+let deletedTask = null;
+let taskChangeRevision = 0;
 
 function isValidTime(value) {
     return value === "" || /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
 }
 
 function isValidTask(task) {
-    return task && typeof task.id === "string" && /^[a-zA-Z0-9_-]+$/.test(task.id)
+    return Boolean(task && typeof task.id === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(task.id)
         && typeof task.title === "string" && task.title.trim().length >= 3 && task.title.length <= 80
-        && isValidDate(task.date) && isValidTime(task.time || "")
+        && isValidDate(task.date) && typeof task.time === "string" && isValidTime(task.time)
         && categories.some((category) => category.id === task.list)
-        && (task.notes === undefined || (typeof task.notes === "string" && task.notes.length <= 240));
+        && typeof task.notes === "string" && task.notes.length <= 240
+        && typeof task.completed === "boolean" && typeof task.favorite === "boolean");
 }
 
 function loadTasks() {
@@ -283,11 +286,44 @@ function toggleFavorite(taskId) {
     saveTasks(`${task.favorite ? "Added to" : "Removed from"} favorites: ${task.title}`);
 }
 
+function renderTaskUndo() {
+    const panel = document.querySelector("#task-undo-panel");
+    if (!panel) return;
+    panel.hidden = !deletedTask;
+    document.querySelector("#task-undo-message").textContent = deletedTask
+        ? `Deleted "${deletedTask.task.title}". Undo is available on this page.`
+        : "";
+}
+
+function invalidateTaskUndo() {
+    deletedTask = null;
+    taskChangeRevision += 1;
+    renderTaskUndo();
+}
+
 function deleteTask(taskId) {
-    if (!getTaskById(taskId)) return;
+    const index = tasks.findIndex((task) => task.id === taskId);
+    if (index === -1) return;
+    deletedTask = { task: { ...tasks[index] }, index };
     if (editingTaskId === taskId) resetTaskForm(document.querySelector("#task-form"));
-    tasks = tasks.filter((task) => task.id !== taskId);
-    saveTasks("Task deleted.");
+    tasks.splice(index, 1);
+    saveTasks("Task deleted. You can undo the latest deletion on this page.");
+    renderTaskUndo();
+    document.querySelector("#task-undo")?.focus();
+}
+
+function undoTaskDeletion() {
+    if (!deletedTask) return;
+    const { task, index } = deletedTask;
+    invalidateTaskUndo();
+    if (getTaskById(task.id)) {
+        announce("That task already exists. No existing task was overwritten.");
+        return;
+    }
+    tasks.splice(Math.min(index, tasks.length), 0, task);
+    saveTasks(`Restored: ${task.title}`);
+    const checkbox = document.getElementById(`complete-${task.id}`);
+    (checkbox || document.querySelector("#task-title"))?.focus();
 }
 
 function setupTaskEditing(list, form) {
@@ -297,16 +333,25 @@ function setupTaskEditing(list, form) {
     });
     document.querySelector("#clear-tasks").addEventListener("click", () => {
         if (!tasks.length || !window.confirm(`Delete all ${tasks.length} tasks? This cannot be undone.`)) return;
+        invalidateTaskUndo();
         tasks = [];
         resetTaskForm(form);
         saveTasks("All tasks cleared.");
     });
     window.addEventListener("storage", (event) => {
         if (event.key !== STORAGE.tasks && event.key !== null) return;
+        invalidateTaskUndo();
         tasks = loadTasks();
         if (editingTaskId && !getTaskById(editingTaskId)) resetTaskForm(form);
         renderTasks();
-        announce("Tasks updated from another tab.");
+        announce("Tasks updated from another tab. Any pending undo was cleared.");
+    });
+    document.querySelector("#task-undo").addEventListener("click", undoTaskDeletion);
+    document.addEventListener("qadam:data-restored", () => {
+        invalidateTaskUndo();
+        tasks = loadTasks();
+        resetTaskForm(form);
+        renderTasks();
     });
 }
 
@@ -366,8 +411,12 @@ function setupTaskJQuery() {
         event.preventDefault();
         const $card = $(this).closest(".task-card");
         const taskId = $card.attr("data-task-id");
+        const revision = taskChangeRevision;
         $card.find("button, input").prop("disabled", true);
-        $card.fadeOut(160, () => deleteTask(taskId));
+        $card.fadeOut(160, () => {
+            if (revision === taskChangeRevision) deleteTask(taskId);
+            else renderTasks();
+        });
     });
 
     $taskList.on("click", ".task-notes-toggle", function (event) {
@@ -380,4 +429,4 @@ function setupTaskJQuery() {
     });
 }
 
-export { setupTasks, getTasks, getCategoryLabel };
+export { setupTasks, getTasks, getCategoryLabel, isValidTask };

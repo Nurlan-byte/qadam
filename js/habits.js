@@ -1,14 +1,25 @@
 import { STORAGE, getLocalDate, addDays, isValidDate, readStorage, writeStorage, escapeHTML, announce, formatDate } from "./shared.js";
 import { defaultHabits } from "./data.js";
 
+const habitPeriods = ["Morning", "Afternoon", "Evening"];
+
+function isValidHabit(habit) {
+    if (!habit || typeof habit !== "object") return false;
+    const validDate = (date) => isValidDate(date) && date <= getLocalDate();
+    const legacy = habit.legacyStreak;
+    return typeof habit.id === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(habit.id)
+        && typeof habit.title === "string" && habit.title.trim().length > 0 && habit.title.length <= 80
+        && habitPeriods.includes(habit.period)
+        && Number.isSafeInteger(habit.streak) && habit.streak >= 0
+        && (habit.lastDoneDate === "" || validDate(habit.lastDoneDate))
+        && (habit.dates === undefined || (Array.isArray(habit.dates) && habit.dates.every(validDate) && new Set(habit.dates).size === habit.dates.length))
+        && (legacy === undefined || legacy === null || (validDate(legacy.date) && Number.isSafeInteger(legacy.count) && legacy.count > 0))
+        && (habit.previousDoneDate === undefined || habit.previousDoneDate === "" || validDate(habit.previousDoneDate))
+        && (habit.previousStreak === undefined || (Number.isSafeInteger(habit.previousStreak) && habit.previousStreak >= 0));
+}
+
 function validHabits(value) {
-    return Array.isArray(value) && value.every((habit) => habit &&
-        typeof habit.id === "string" && /^[a-zA-Z0-9_-]+$/.test(habit.id) &&
-        typeof habit.title === "string" && habit.title.trim().length > 0 && habit.title.length <= 80 &&
-        typeof habit.period === "string" && habit.period.length <= 30 &&
-        Number.isInteger(habit.streak) && habit.streak >= 0 &&
-        (habit.lastDoneDate === "" || isValidDate(habit.lastDoneDate)) &&
-        (habit.dates === undefined || (Array.isArray(habit.dates) && habit.dates.every(isValidDate))));
+    return Array.isArray(value) && value.every(isValidHabit) && new Set(value.map((habit) => habit.id)).size === value.length;
 }
 
 function currentStreak(habit, today = getLocalDate()) {
@@ -51,6 +62,7 @@ function getHabits() {
 
 let habits = getHabits();
 let hasUnsavedChanges = false;
+let editingHabitId = null;
 
 function daysFrom(start, count) {
     return Array.from({ length: count }, (_, index) => addDays(start, index));
@@ -81,12 +93,16 @@ function renderHabitCard(habit, fullPage) {
             <label class="today-task-title" for="${id}">${title}</label>
             <span class="today-tag">${period}</span><span class="today-streak">🔥 ${streak} day streak</span></li>`;
     }
-    return `<li class="col-md-6 col-xl-4"><article class="habit-card">
+    return `<li class="col-md-6 col-xl-4"><article class="habit-card" data-habit-card="${id}">
         ${checkbox}<div class="habit-card-text">
             <label class="habit-name" for="${id}">${title}</label>
             <p class="habit-meta">Every day · ${period}</p>
             <p class="habit-status ${checked ? "habit-status-done" : ""}">${checked ? "Done today" : "Not checked in today"}</p>
             <p class="habit-run">${streak} day streak</p>
+            <div class="habit-actions">
+                <button class="habit-edit btn btn-sm btn-outline-light" type="button" aria-label="Edit habit: ${title}">Edit</button>
+                <button class="habit-delete btn btn-sm btn-outline-light" type="button" aria-label="Delete habit: ${title}">Delete</button>
+            </div>
         </div></article></li>`;
 }
 
@@ -174,8 +190,118 @@ function setCheckIn(habit, checked) {
     habit.streak = currentStreak(habit);
 }
 
+function saveHabits(message) {
+    const saved = writeStorage(STORAGE.habits, habits);
+    hasUnsavedChanges = !saved;
+    renderHabits();
+    announce(saved ? message : `${message} This change could not be saved in your browser.`);
+    return saved;
+}
+
+function showHabitFieldError(field, message) {
+    field.classList.toggle("is-invalid", Boolean(message));
+    field.setAttribute("aria-invalid", String(Boolean(message)));
+    document.getElementById(`${field.id}-error`).textContent = message;
+}
+
+function resetHabitForm() {
+    const form = document.querySelector("#habit-form");
+    editingHabitId = null;
+    if (!form) return;
+    form.reset();
+    form.querySelectorAll("input, select").forEach((field) => showHabitFieldError(field, ""));
+    document.querySelector("#habit-form-title").textContent = "New habit";
+    document.querySelector("#habit-submit").textContent = "Add habit";
+    document.querySelector("#habit-cancel").hidden = true;
+    document.querySelector("#habit-form-status").textContent = "";
+}
+
+function editHabit(habitId) {
+    const habit = habits.find((item) => item.id === habitId);
+    if (!habit) return;
+    resetHabitForm();
+    editingHabitId = habitId;
+    document.querySelector("#habit-title").value = habit.title;
+    document.querySelector("#habit-period").value = habit.period;
+    document.querySelector("#habit-form-title").textContent = "Edit habit";
+    document.querySelector("#habit-submit").textContent = "Save changes";
+    document.querySelector("#habit-cancel").hidden = false;
+    document.querySelector("#habit-title").focus();
+}
+
+function submitHabit(form) {
+    const title = form.querySelector("#habit-title");
+    const period = form.querySelector("#habit-period");
+    const titleError = !title.value.trim() ? "Enter a habit title." : title.value.trim().length > 80 ? "Use no more than 80 characters." : "";
+    const periodError = !habitPeriods.includes(period.value) ? "Choose Morning, Afternoon or Evening." : "";
+    showHabitFieldError(title, titleError);
+    showHabitFieldError(period, periodError);
+    document.querySelector("#habit-form-status").textContent = "";
+    if (titleError || periodError) {
+        form.querySelector(".is-invalid").focus();
+        return;
+    }
+    const editing = editingHabitId !== null;
+    if (editing) {
+        const habit = habits.find((item) => item.id === editingHabitId);
+        if (!habit) {
+            resetHabitForm();
+            announce("That habit no longer exists. You can add a new one.");
+            return;
+        }
+        habit.title = title.value.trim();
+        habit.period = period.value;
+    } else {
+        habits.push({ id: `habit-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, title: title.value.trim(), period: period.value, dates: [], lastDoneDate: "", streak: 0, legacyStreak: null });
+    }
+    const message = editing ? "Habit updated." : "Habit added.";
+    const saved = saveHabits(message);
+    resetHabitForm();
+    document.querySelector("#habit-form-status").textContent = saved ? `${message} Saved in this browser.` : `${message} Your browser could not save this change.`;
+    title.focus();
+}
+
+function deleteHabit(habitId) {
+    const habit = habits.find((item) => item.id === habitId);
+    if (!habit || !window.confirm(`Delete "${habit.title}" and its check-in history? This cannot be undone.`)) return;
+    habits = habits.filter((item) => item.id !== habitId);
+    if (editingHabitId === habitId) resetHabitForm();
+    saveHabits("Habit and its check-in history deleted.");
+    document.querySelector("#habit-title")?.focus();
+}
+
+function setupHabitForm(list) {
+    const form = document.querySelector("#habit-form");
+    if (!form) return;
+    resetHabitForm();
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        submitHabit(form);
+    });
+    form.querySelectorAll("input, select").forEach((field) => field.addEventListener("input", () => {
+        showHabitFieldError(field, "");
+        document.querySelector("#habit-form-status").textContent = "";
+    }));
+    document.querySelector("#habit-cancel").addEventListener("click", () => {
+        resetHabitForm();
+        announce("Editing cancelled. The habit was not changed.");
+        document.querySelector("#habit-title").focus();
+    });
+    list.addEventListener("click", (event) => {
+        const button = event.target.closest(".habit-edit, .habit-delete");
+        if (!button) return;
+        const habitId = button.closest("[data-habit-card]").dataset.habitCard;
+        if (button.matches(".habit-edit")) editHabit(habitId);
+        else deleteHabit(habitId);
+    });
+}
+
 function refreshHabits() {
     if (!hasUnsavedChanges) habits = getHabits();
+    if (editingHabitId && !habits.some((habit) => habit.id === editingHabitId)) {
+        resetHabitForm();
+        announce("The habit being edited was removed in another tab.");
+    }
     renderHabits();
 }
 
@@ -183,21 +309,25 @@ function setupHabits() {
     const list = document.querySelector("#habit-checkin-list");
     if (!list) return;
     renderHabits();
+    setupHabitForm(list);
     list.addEventListener("change", (event) => {
         const checkbox = event.target.closest("[data-habit-id]");
         if (!checkbox) return;
         const habit = habits.find((item) => item.id === checkbox.dataset.habitId);
         if (!habit) return;
         setCheckIn(habit, checkbox.checked);
-        const saved = writeStorage(STORAGE.habits, habits);
-        hasUnsavedChanges = !saved;
-        renderHabits();
-        const message = `${habit.title}: ${checkbox.checked ? "checked in" : "check-in removed"}.`;
-        announce(saved ? message : `${message} This change could not be saved in your browser.`);
+        saveHabits(`${habit.title}: ${checkbox.checked ? "checked in" : "check-in removed"}.`);
         document.getElementById(habit.id)?.focus();
     });
     window.addEventListener("storage", (event) => {
-        if (event.key === STORAGE.habits || event.key === null) refreshHabits();
+        if (event.key !== STORAGE.habits && event.key !== null) return;
+        if (hasUnsavedChanges) announce("Another tab changed habits. Your unsaved changes are still shown. Reload to use the saved version.");
+        refreshHabits();
+    });
+    document.addEventListener("qadam:data-restored", () => {
+        hasUnsavedChanges = false;
+        resetHabitForm();
+        refreshHabits();
     });
     window.addEventListener("focus", refreshHabits);
     document.addEventListener("visibilitychange", () => {
@@ -205,4 +335,4 @@ function setupHabits() {
     });
 }
 
-export { setupHabits, getHabits };
+export { setupHabits, getHabits, isValidHabit };
