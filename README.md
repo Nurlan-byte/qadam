@@ -84,12 +84,14 @@ Missing values use starter defaults. Invalid data is handled without breaking th
 - `project/endterm`, tag `endterm-v1`: the completed endterm stage.
 - `final-v1`: the first completed final stage.
 - `project/final`, tag `final-v2`: the final stage including the live calendar, dated habit history and defence guide.
-- Endterm has three main commits per account; final has four per account. Git author names and emails match the identities already used in this repository.
+- Endterm has three main commits per account. Final contributions are split by the responsibilities above, with a separate release-documentation commit. Git author names and emails match the identities already used in this repository.
 
 See [ENDTERM.md](ENDTERM.md) and [FINAL.md](FINAL.md) for requirement maps and acceptance scenarios. [DEFENSE.md](DEFENSE.md) contains a Russian demo script, responsibilities and questions with answers. [SUBMISSION.md](SUBMISSION.md) contains the repository links for submission.
 
 ## Publication
 
-The existing [GitHub Pages site](https://nurlan-byte.github.io/qadam/) is published from `main`. The prepared final version is on `project/final`; it has not been moved to the publishing branch. To publish later, merge the reviewed final version into `main`, push it and wait for the existing Pages build/deployment workflow to finish. Then verify the live site.
+Live site: [Qadam on GitHub Pages](https://nurlan-byte.github.io/qadam/).
 
-Until publication, review or submit the [final branch](https://github.com/Nurlan-byte/qadam/tree/project/final). The endterm branch and tags stay available for separate submission.
+GitHub Pages publishes the repository root from `main` through the existing Pages build/deployment workflow. The source development branch is `project/final`. To publish an update, merge its reviewed changes into `main`, push and wait for the Pages workflow to complete. Verify the live pages after deployment.
+
+The endterm branch and `endterm-v1` tag remain available for separate submission. `final-v2` preserves the final application with the dynamic calendar, dated habits and defence material.
