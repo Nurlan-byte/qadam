@@ -68,7 +68,7 @@
     <main class="app-main">
         <header class="page-header">
             <h1 class="page-title">Calendar</h1>
-            <p class="page-subtitle">Your week and month at a glance.</p>
+            <p class="page-subtitle">Your tasks by date, with a forecast to help plan the week.</p>
         </header>
 
         <section class="panel mb-4" id="weather-planner" aria-labelledby="weather-title">
@@ -92,300 +92,43 @@
 
 
 
-        <section class="panel" aria-labelledby="cal-week-title">
-            <h2 id="cal-week-title" class="h5 mb-3">Week of 28 September</h2>
-
-            <!--One CSS Grid: 1 column of hours + 7 day columns-->
-            <div class="cal-week">
-
-                <!--Row 1: empty corner, then the day headers-->
-                <div class="cal-corner"></div>
-                <div class="cal-day-head">
-                    <span class="cal-day-name">Mon</span>
-                    <span class="cal-day-number">28</span>
-                </div>
-                <div class="cal-day-head">
-                    <span class="cal-day-name">Tue</span>
-                    <span class="cal-day-number">29</span>
-                </div>
-                <div class="cal-day-head cal-day-head--today">
-                    <span class="cal-day-name">Wed</span>
-                    <span class="cal-day-number">30</span>
-                </div>
-                <div class="cal-day-head">
-                    <span class="cal-day-name">Thu</span>
-                    <span class="cal-day-number">1</span>
-                </div>
-                <div class="cal-day-head">
-                    <span class="cal-day-name">Fri</span>
-                    <span class="cal-day-number">2</span>
-                </div>
-                <div class="cal-day-head">
-                    <span class="cal-day-name">Sat</span>
-                    <span class="cal-day-number">3</span>
-                </div>
-                <div class="cal-day-head">
-                    <span class="cal-day-name">Sun</span>
-                    <span class="cal-day-number">4</span>
-                </div>
-
-                <!--Row 2: hour labels, then the day columns-->
-                <div class="cal-hours">
-                    <span class="cal-hour">08:00</span>
-                    <span class="cal-hour">09:00</span>
-                    <span class="cal-hour">10:00</span>
-                    <span class="cal-hour">11:00</span>
-                    <span class="cal-hour">12:00</span>
-                    <span class="cal-hour">13:00</span>
-                    <span class="cal-hour">14:00</span>
-                    <span class="cal-hour">15:00</span>
-                    <span class="cal-hour">16:00</span>
-                    <span class="cal-hour">17:00</span>
-                    <span class="cal-hour">18:00</span>
-                    <span class="cal-hour">19:00</span>
-                    <span class="cal-hour">20:00</span>
-                </div>
-                <div class="cal-day-column">
-                    <article class="cal-event cal-s1400 cal-d50">
-                        <h3 class="cal-event-title">Operating Systems</h3>
-                        <p class="cal-event-time">14:00 – 14:50</p>
-                    </article>
-                    <article class="cal-event cal-s1500 cal-d50">
-                        <h3 class="cal-event-title">Operating Systems</h3>
-                        <p class="cal-event-time">15:00 – 15:50</p>
-                    </article>
-                    <article class="cal-event cal-s1600 cal-d50">
-                        <h3 class="cal-event-title">Software Design Patterns</h3>
-                        <p class="cal-event-time">16:00 – 16:50</p>
-                    </article>
-                    <article class="cal-event cal-s1700 cal-d50">
-                        <h3 class="cal-event-title">Software Design Patterns</h3>
-                        <p class="cal-event-time">17:00 – 17:50</p>
-                    </article>
-                    <article class="cal-event cal-s1800 cal-d60">
-                        <h3 class="cal-event-title">Web Technologies 1</h3>
-                        <p class="cal-event-time">18:00 – 19:00</p>
-                    </article>
-                </div>
-                <div class="cal-day-column">
-                    <article class="cal-event cal-s1400 cal-d50">
-                        <h3 class="cal-event-title">Software Development</h3>
-                        <p class="cal-event-time">14:00 – 14:50</p>
-                    </article>
-                    <article class="cal-event cal-s1500 cal-d50">
-                        <h3 class="cal-event-title">Software Development</h3>
-                        <p class="cal-event-time">15:00 – 15:50</p>
-                    </article>
-                    <article class="cal-event cal-s1600 cal-d50">
-                        <h3 class="cal-event-title">Russian Language 1</h3>
-                        <p class="cal-event-time">16:00 – 16:50</p>
-                    </article>
-                    <article class="cal-event cal-s1700 cal-d50">
-                        <h3 class="cal-event-title">Russian Language 1</h3>
-                        <p class="cal-event-time">17:00 – 17:50</p>
-                    </article>
-                </div>
-                <div class="cal-day-column cal-day-column--today">
-                    <article class="cal-event cal-s1305 cal-d50">
-                        <h3 class="cal-event-title">Algorithms</h3>
-                        <p class="cal-event-time">13:05 – 13:55</p>
-                    </article>
-                    <article class="cal-event cal-s1400 cal-d50">
-                        <h3 class="cal-event-title">Algorithms</h3>
-                        <p class="cal-event-time">14:00 – 14:50</p>
-                    </article>
-                </div>
-                <div class="cal-day-column">
-                    <article class="cal-event cal-s1500 cal-d50">
-                        <h3 class="cal-event-title">Operating Systems</h3>
-                        <p class="cal-event-time">15:00 – 15:50</p>
-                    </article>
-                    <article class="cal-event cal-s1600 cal-d50">
-                        <h3 class="cal-event-title">Software Development</h3>
-                        <p class="cal-event-time">16:00 – 16:50</p>
-                    </article>
-                </div>
-                <div class="cal-day-column">
-                    <article class="cal-event cal-s1500 cal-d50">
-                        <h3 class="cal-event-title">Algorithms</h3>
-                        <p class="cal-event-time">15:00 – 15:50</p>
-                    </article>
-                    <article class="cal-event cal-s1600 cal-d50">
-                        <h3 class="cal-event-title">Algorithms</h3>
-                        <p class="cal-event-time">16:00 – 16:50</p>
-                    </article>
-                    <article class="cal-event cal-s1800 cal-d60">
-                        <h3 class="cal-event-title">Web Technologies 1</h3>
-                        <p class="cal-event-time">18:00 – 19:00</p>
-                    </article>
-                </div>
-                <div class="cal-day-column"></div>
-                <div class="cal-day-column">
-                    <article class="cal-event cal-s1200 cal-d60">
-                        <h3 class="cal-event-title">Plan the next week</h3>
-                        <p class="cal-event-time">12:00 – 13:00</p>
-                    </article>
+        <section class="panel" id="task-calendar" aria-labelledby="calendar-month-title">
+            <div class="calendar-toolbar">
+                <h2 class="h5 mb-0" id="calendar-month-title" aria-live="polite">Task calendar</h2>
+                <div class="calendar-controls" aria-label="Choose a month">
+                    <button class="btn btn-outline-light btn-sm" id="calendar-previous" type="button" aria-label="Previous month">Previous</button>
+                    <button class="btn btn-outline-light btn-sm" id="calendar-today" type="button">Today</button>
+                    <button class="btn btn-outline-light btn-sm" id="calendar-next" type="button" aria-label="Next month">Next</button>
                 </div>
             </div>
-
+            <p class="calendar-help" id="calendar-help">Choose a day to see your tasks. Use arrow keys to move between days, or Page Up and Page Down to change months.</p>
+            <table class="calendar-month" aria-describedby="calendar-help">
+                <caption class="visually-hidden">Tasks by date. The week starts on Monday. Counts include completed tasks.</caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><abbr title="Monday">Mon</abbr></th>
+                        <th scope="col"><abbr title="Tuesday">Tue</abbr></th>
+                        <th scope="col"><abbr title="Wednesday">Wed</abbr></th>
+                        <th scope="col"><abbr title="Thursday">Thu</abbr></th>
+                        <th scope="col"><abbr title="Friday">Fri</abbr></th>
+                        <th scope="col"><abbr title="Saturday">Sat</abbr></th>
+                        <th scope="col"><abbr title="Sunday">Sun</abbr></th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-days"></tbody>
+            </table>
         </section>
 
-        <section class="panel mt-4" aria-labelledby="cal-month-title">
-            <h2 id="cal-month-title" class="h5 mb-3">September 2026</h2>
-
-            <div class="table-responsive">
-                <table class="table calendar-month mb-0">
-                    <caption>Lessons per day, September 2026</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">Mon</th>
-                            <th scope="col">Tue</th>
-                            <th scope="col">Wed</th>
-                            <th scope="col">Thu</th>
-                            <th scope="col">Fri</th>
-                            <th scope="col">Sat</th>
-                            <th scope="col">Sun</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="calendar-day calendar-day-muted">
-                                <span class="calendar-day-number">31</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">1 Sep</span>
-                                <span class="calendar-count">2 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">2</span>
-                                <span class="calendar-count">3 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">3</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">4</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">5</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">6</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">7</span>
-                                <span class="calendar-count">4 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">8</span>
-                                <span class="calendar-count">4 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">9</span>
-                                <span class="calendar-count">3 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">10</span>
-                                <span class="calendar-count">3 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">11</span>
-                                <span class="calendar-count">4 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">12</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">13</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">14</span>
-                                <span class="calendar-count">5 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">15</span>
-                                <span class="calendar-count">5 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">16</span>
-                                <span class="calendar-count">3 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">17</span>
-                                <span class="calendar-count">3 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">18</span>
-                                <span class="calendar-count">5 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">19</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">20</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">21</span>
-                                <span class="calendar-count">5 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">22</span>
-                                <span class="calendar-count">4 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">23</span>
-                                <span class="calendar-count">2 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">24</span>
-                                <span class="calendar-count">2 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">25</span>
-                                <span class="calendar-count">5 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">26</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">27</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">28</span>
-                                <span class="calendar-count">5 lessons</span>
-                            </td>
-                            <td class="calendar-day">
-                                <span class="calendar-day-number">29</span>
-                                <span class="calendar-count">4 lessons</span>
-                            </td>
-                            <td class="calendar-day calendar-day-today">
-                                <span class="calendar-day-number">30</span>
-                                <span class="calendar-count">2 lessons</span>
-                            </td>
-                            <td class="calendar-day calendar-day-muted">
-                                <span class="calendar-day-number">1 Oct</span>
-                            </td>
-                            <td class="calendar-day calendar-day-muted">
-                                <span class="calendar-day-number">2</span>
-                            </td>
-                            <td class="calendar-day calendar-day-muted">
-                                <span class="calendar-day-number">3</span>
-                            </td>
-                            <td class="calendar-day calendar-day-muted">
-                                <span class="calendar-day-number">4</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <section class="panel mt-4" aria-labelledby="calendar-day-title">
+            <div class="calendar-toolbar">
+                <div>
+                    <h2 class="h5" id="calendar-day-title">Selected day</h2>
+                    <p class="calendar-help mb-0" id="calendar-day-summary" role="status" aria-live="polite"></p>
+                </div>
+                <a class="btn btn-qadam btn-sm" href="today.html">Manage tasks on Today</a>
             </div>
+            <p class="calendar-help" id="calendar-day-empty" hidden>No tasks are scheduled for this day. Add one on the Today page.</p>
+            <ul class="calendar-task-list" id="calendar-day-tasks"></ul>
         </section>
 
         <footer class="app-footer">
