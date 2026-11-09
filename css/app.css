@@ -270,3 +270,72 @@
         animation-duration: 0.01ms !important;
     }
 }
+
+.appearance-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+.appearance-controls .theme-toggle {
+    align-self: center;
+    margin: 0;
+}
+
+.text-size-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.text-size-control label {
+    white-space: nowrap;
+}
+
+.text-size-control select {
+    min-height: 2rem;
+    padding: 0.25rem;
+    background-color: var(--surface-2);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    font: inherit;
+}
+
+.text-size-control select:focus-visible {
+    outline: 3px solid var(--flame);
+    outline-offset: 3px;
+}
+
+.site-header .appearance-controls {
+    margin: 0 0 0 auto;
+}
+
+.site-header .navbar-collapse {
+    flex-basis: 100%;
+}
+
+.site-header .navbar-nav {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 991.98px) {
+    .appearance-controls,
+    .site-header .appearance-controls {
+        order: 1;
+        flex-basis: 100%;
+        margin: 0.75rem 0 0;
+    }
+
+    .navbar-collapse {
+        order: 2;
+    }
+
+    .appearance-controls .theme-toggle {
+        margin: 0;
+    }
+}
