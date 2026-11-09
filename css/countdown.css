@@ -87,3 +87,59 @@
         font-size: 36px;
     }
 }
+.event-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.event-count {
+    margin-left: 0.4rem;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.event-status {
+    min-height: 1.5rem;
+    color: var(--muted);
+}
+
+.countdown-content h3,
+.countdown-description {
+    overflow-wrap: anywhere;
+}
+
+.event-actions,
+.event-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.event-actions {
+    margin-top: 1rem;
+}
+
+.event-form-panel .form-control,
+.event-form-panel .form-select {
+    min-width: 0;
+    background-color: var(--surface-2);
+    border-color: var(--line);
+    color: var(--ink);
+}
+
+.event-form-panel .form-control:focus,
+.event-form-panel .form-select:focus {
+    border-color: var(--done);
+    box-shadow: 0 0 0 3px var(--done-soft);
+}
+
+.event-form-panel .is-invalid {
+    border-color: #d76e5f;
+}
+
+.event-form-panel input[type="date"] {
+    max-width: 100%;
+}

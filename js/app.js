@@ -6,6 +6,7 @@ import { setupTasks } from "./tasks.js";
 import { setupHabits } from "./habits.js";
 import { setupCountdowns } from "./countdown.js";
 import { setupFocusTimer } from "./focus.js";
+import { setupBackup } from "./backup.js";
 
 setupTheme();
 setupTasks();
@@ -17,3 +18,4 @@ setupWeather();
 setupCalendar();
 
 setupStatistics();
+setupBackup();

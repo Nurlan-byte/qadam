@@ -156,3 +156,25 @@
     text-align: left;
   }
 }
+
+.task-undo-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--done);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+}
+
+.task-undo-panel[hidden] {
+  display: none;
+}
+
+.task-undo-panel p {
+  flex: 1 1 12rem;
+  overflow-wrap: anywhere;
+}
