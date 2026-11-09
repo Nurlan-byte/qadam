@@ -12,6 +12,8 @@ The final stage builds on the endterm tag. All original pages and earlier intera
 | Additional feature: full CRUD | Today task create/read/update/delete, edit cancellation and clear-all confirmation | Nurlan-byte |
 | Additional feature: statistics | Task category chart, completion summaries and seven-day focus chart from saved data | AsylStyle |
 | Additional feature: accessibility | Persistent text-size controls, labels and keyboard-usable controls | AsylStyle |
+| Live task calendar | Month navigation, actual saved tasks by date, selected-day details and cross-tab updates | AsylStyle |
+| Recorded habit history | Date-based check-ins on Today/Habits, actual 28-day history and safe migration of old streaks | Nurlan-byte |
 | Preserve endterm | Search, filters, jQuery actions/effects, validation, check-ins, timer, theme and countdown | All |
 | Documentation and deployment preparation | README, stage tags, acceptance checks and existing Pages instructions | All |
 
@@ -44,10 +46,19 @@ There are five substantial additions after endterm: API, OOP, full CRUD editing,
 4. Choose 125% text size, switch pages and reload. Verify the setting stays selected and controls remain usable on mobile.
 5. Switch between dark and light themes and navigate with the keyboard.
 
+## Check Calendar and Habits
+
+1. Add a dated task on Today. Open Calendar, select its day and verify the title, time, category and completion state.
+2. Navigate between months and back with Today. Verify February in leap and non-leap years, and the December/January boundary.
+3. Use arrow keys to select dates. Change a task in another tab and confirm the selected day refreshes without jumping to another month.
+4. Check in a habit on Today. Open Habits and verify today's history cell, week count and checkbox. Undo on Habits and check that Today updates.
+5. Reload and verify dated history persists. Repeated check/uncheck must not inflate streaks. A missed day starts a new streak.
+6. For older stored habits, show only genuinely known dates. Preserve any old streak baseline separately; do not fill invented history cells.
+
 ## Check resilience
 
 Use a separate browser profile or test context so real task data is preserved. Test malformed JSON, null/object values where arrays are expected, invalid dates, duplicate task IDs, and denied localStorage writes. The application should keep running and report save failures. Existing endterm checks are in ENDTERM.md.
 
 ## Defence
 
-Each person explains their own contribution and the whole application. Be ready to trace data from an API request through ForecastDay objects to DOM elements; show CRUD changes going into JSON/localStorage; explain dashboard aggregation; and modify a small function live. Explain the original static calendar/history examples accurately.
+Each person explains their own contribution and the whole application. Be ready to trace data from an API request through ForecastDay objects to DOM elements; show CRUD changes going into JSON/localStorage; explain dashboard aggregation; and modify a small function live. Explain how calendar dates are calculated and how real habit check-in dates differ from a migrated legacy streak counter. Use DEFENSE.md for the group demonstration and questions.
