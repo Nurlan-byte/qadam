@@ -1,4 +1,4 @@
-/* Shared endterm interactions: themes, task tools, feedback and timer controls. */
+/* Shared application controls: themes, task tools, feedback and timer controls. */
 :root[data-bs-theme="light"] {
     --bg: #f2f7f5;
     --surface: #ffffff;
@@ -338,4 +338,9 @@
     .appearance-controls .theme-toggle {
         margin: 0;
     }
+}
+
+/* Give task titles room before the action buttons wrap to the next line. */
+.task-card .today-task-title {
+    flex: 1 1 12rem;
 }
