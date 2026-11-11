@@ -1,12 +1,14 @@
-import { isValidDate } from "./shared.js";
+import { isValidDate, makeId } from "./shared.js";
 
 const SESSION_MINUTES = 25;
 const SESSION_SECONDS = SESSION_MINUTES * 60;
 
-// A completed session is saved as { date: "YYYY-MM-DD", minutes: 25 }.
+// Older sessions have only a date and minutes; new sessions also keep their timer ID.
 function isValidFocusSession(session) {
     if (!session || typeof session !== "object") return false;
-    return isValidDate(session.date) && Number.isFinite(session.minutes) && session.minutes > 0 && session.minutes <= 180;
+    return isValidDate(session.date) && Number.isFinite(session.minutes) && session.minutes > 0 && session.minutes <= 180
+        && (session.id === undefined || (typeof session.id === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(session.id)))
+        && (session.endedAt === undefined || (typeof session.endedAt === "string" && Number.isFinite(Date.parse(session.endedAt))));
 }
 
 // The timer saves a deadline instead of counting in the background,
@@ -14,16 +16,22 @@ function isValidFocusSession(session) {
 class FocusTimer {
     constructor(saved) {
         this.status = "ready";
+        this.id = "";
         this.remainingSeconds = SESSION_SECONDS;
         this.deadline = 0;
 
         const usable = saved && (saved.status === "running" || saved.status === "paused")
-            && Number.isFinite(saved.remainingSeconds) && saved.remainingSeconds > 0
-            && saved.remainingSeconds <= SESSION_SECONDS && Number.isFinite(saved.deadline);
+            && Number.isInteger(saved.remainingSeconds) && saved.remainingSeconds > 0
+            && saved.remainingSeconds <= SESSION_SECONDS
+            && (saved.status === "paused" ? saved.deadline === 0
+                : Number.isSafeInteger(saved.deadline) && saved.deadline > 0 && saved.deadline <= 8640000000000000);
         if (usable) {
             this.status = saved.status;
             this.remainingSeconds = saved.remainingSeconds;
             this.deadline = saved.deadline;
+            // Derive the same ID when an older timer without an ID is loaded again.
+            this.id = typeof saved.id === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(saved.id)
+                ? saved.id : `focus-${saved.deadline}-${saved.remainingSeconds}`;
         }
     }
 
@@ -36,6 +44,7 @@ class FocusTimer {
     }
 
     start() {
+        if (!this.isPaused()) this.id = makeId("focus");
         this.status = "running";
         this.deadline = Date.now() + this.remainingSeconds * 1000;
     }
@@ -48,6 +57,7 @@ class FocusTimer {
 
     reset() {
         this.status = "ready";
+        this.id = "";
         this.remainingSeconds = SESSION_SECONDS;
         this.deadline = 0;
     }
@@ -55,7 +65,7 @@ class FocusTimer {
     getRemainingSeconds() {
         if (!this.isRunning()) return this.remainingSeconds;
         const seconds = Math.ceil((this.deadline - Date.now()) / 1000);
-        return Math.max(0, seconds);
+        return Math.max(0, Math.min(this.remainingSeconds, seconds));
     }
 
     isFinished() {
