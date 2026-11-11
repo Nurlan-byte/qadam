@@ -1,28 +1,22 @@
 import { STORAGE, readStorage, writeStorage } from "./shared.js";
 
-const TEXT_SIZE_KEY = "qadam-text-size";
 const TEXT_SIZES = [100, 112, 125];
 
+// The button names the theme the user will switch to.
 function updateThemeButton(button, theme) {
     const nextTheme = theme === "dark" ? "light" : "dark";
-    button.textContent = `${nextTheme === "light" ? "☀ Light" : "☾ Dark"} theme`;
+    button.textContent = nextTheme === "light" ? "☀ Light theme" : "☾ Dark theme";
     button.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
     button.setAttribute("aria-pressed", String(theme === "light"));
 }
 
-function readTextSize() {
-    return readStorage(TEXT_SIZE_KEY, 100, (value) => TEXT_SIZES.includes(value));
-}
-
+// Adds a "Text size" select next to the theme button and restores the saved size.
 function setupTextSize(themeButton) {
     const controls = document.createElement("div");
     controls.className = "appearance-controls";
-    const sidebarMenu = themeButton.closest(".sidebar")?.querySelector(".navbar-collapse");
-    if (sidebarMenu) {
-        sidebarMenu.append(controls);
-    } else {
-        themeButton.before(controls);
-    }
+    const sidebarMenu = document.querySelector(".sidebar .navbar-collapse");
+    if (sidebarMenu) sidebarMenu.append(controls);
+    else themeButton.before(controls);
     controls.append(themeButton);
 
     const field = document.createElement("div");
@@ -33,25 +27,20 @@ function setupTextSize(themeButton) {
     const select = document.createElement("select");
     select.id = "text-size";
     for (const size of TEXT_SIZES) {
-        select.add(new Option(`${size}%`, String(size)));
+        select.add(new Option(`${size}%`, size));
     }
     field.append(label, select);
     controls.append(field);
 
-    function applyTextSize(size) {
-        document.documentElement.style.fontSize = `${size}%`;
-        select.value = String(size);
-    }
+    let savedSize = readStorage(STORAGE.textSize, 100);
+    if (!TEXT_SIZES.includes(savedSize)) savedSize = 100;
+    document.documentElement.style.fontSize = `${savedSize}%`;
+    select.value = savedSize;
 
-    applyTextSize(readTextSize());
     select.addEventListener("change", () => {
         const size = Number(select.value);
-        if (!TEXT_SIZES.includes(size)) return;
-        applyTextSize(size);
-        writeStorage(TEXT_SIZE_KEY, size);
-    });
-    window.addEventListener("storage", (event) => {
-        if (event.key === TEXT_SIZE_KEY || event.key === null) applyTextSize(readTextSize());
+        document.documentElement.style.fontSize = `${size}%`;
+        writeStorage(STORAGE.textSize, size);
     });
 }
 
@@ -59,23 +48,17 @@ function setupTheme() {
     const root = document.documentElement;
     const button = document.querySelector("#theme-toggle");
 
-    function applyTheme() {
-        const saved = readStorage(STORAGE.theme, "dark");
-        const theme = saved === "light" ? "light" : "dark";
-        root.setAttribute("data-bs-theme", theme);
-        if (button) updateThemeButton(button, theme);
-    }
-
-    applyTheme();
+    // Restore the saved theme; dark is the default.
+    const theme = readStorage(STORAGE.theme, "dark") === "light" ? "light" : "dark";
+    root.setAttribute("data-bs-theme", theme);
     if (!button) return;
+    updateThemeButton(button, theme);
+
     button.addEventListener("click", () => {
         const nextTheme = root.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
         root.setAttribute("data-bs-theme", nextTheme);
         updateThemeButton(button, nextTheme);
         writeStorage(STORAGE.theme, nextTheme);
-    });
-    window.addEventListener("storage", (event) => {
-        if (event.key === STORAGE.theme || event.key === null) applyTheme();
     });
     setupTextSize(button);
 }

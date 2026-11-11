@@ -1,5 +1,9 @@
+// Shared helpers: storage keys, dates, localStorage and small DOM utilities.
+
 const STORAGE = {
     theme: "qadam-theme",
+    textSize: "qadam-text-size",
+    weatherCity: "qadam-weather-city",
     tasks: "qadam-tasks",
     habits: "qadam-habits",
     focusSessions: "qadam-focus-sessions",
@@ -7,6 +11,7 @@ const STORAGE = {
     events: "qadam-events"
 };
 
+// Returns a date as "YYYY-MM-DD" in the user's own time zone.
 function getLocalDate(date = new Date()) {
     const year = String(date.getFullYear()).padStart(4, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -14,6 +19,7 @@ function getLocalDate(date = new Date()) {
     return `${year}-${month}-${day}`;
 }
 
+// Noon is used so that a daylight-saving change never moves the date.
 function addDays(dateString, amount) {
     const date = new Date(`${dateString}T12:00:00`);
     date.setDate(date.getDate() + amount);
@@ -22,9 +28,8 @@ function addDays(dateString, amount) {
 
 function isValidDate(value) {
     if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-    if (value.startsWith("0000")) return false;
     const date = new Date(`${value}T12:00:00`);
-    return Number.isFinite(date.getTime()) && getLocalDate(date) === value;
+    return !Number.isNaN(date.getTime()) && getLocalDate(date) === value;
 }
 
 function showStorageWarning(message) {
@@ -40,23 +45,22 @@ function showStorageWarning(message) {
     warning.textContent = message;
 }
 
-function readStorage(key, fallback, validate = () => true) {
+// Reads JSON from localStorage. Missing or broken values give the fallback.
+function readStorage(key, fallback) {
     try {
         const value = localStorage.getItem(key);
-        if (value === null) return structuredClone(fallback);
-        const parsed = JSON.parse(value);
-        if (!validate(parsed)) throw new Error("Invalid saved data");
-        return parsed;
+        if (value === null) return fallback;
+        return JSON.parse(value);
     } catch (error) {
         showStorageWarning("Some saved data could not be loaded. Default values are shown for this visit.");
-        return structuredClone(fallback);
+        return fallback;
     }
 }
 
+// Saves a value as JSON. Returns false when the browser refuses to save.
 function writeStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
-        document.dispatchEvent(new CustomEvent("qadam:data-changed", { detail: { key } }));
         return true;
     } catch (error) {
         showStorageWarning("Changes could not be saved in this browser. They will last only while this page stays open.");
@@ -64,10 +68,14 @@ function writeStorage(key, value) {
     }
 }
 
+// Makes user text safe to insert into an HTML string.
 function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, (character) => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-    })[character]);
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
 }
 
 function announce(message) {
@@ -77,7 +85,11 @@ function announce(message) {
 
 function formatDate(dateString) {
     if (!isValidDate(dateString)) return "No date";
-    return new Intl.DateTimeFormat("en", { day: "numeric", month: "short" }).format(new Date(`${dateString}T12:00:00`));
+    return new Date(`${dateString}T12:00:00`).toLocaleDateString("en", { day: "numeric", month: "short" });
 }
 
-export { STORAGE, getLocalDate, addDays, isValidDate, readStorage, writeStorage, escapeHTML, announce, formatDate };
+function makeId(prefix) {
+    return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+}
+
+export { STORAGE, getLocalDate, addDays, isValidDate, readStorage, writeStorage, escapeHTML, announce, formatDate, makeId };

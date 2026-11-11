@@ -1,27 +1,32 @@
-import { STORAGE, getLocalDate, readStorage, writeStorage } from "./shared.js";
-import { SESSION_MINUTES, SESSION_SECONDS, isValidFocusSession, isValidFocusTimer, getRemainingSeconds, addCompletedSession } from "./focus-model.js";
+import { STORAGE, getLocalDate, addDays, readStorage, writeStorage } from "./shared.js";
+import { SESSION_MINUTES, FocusTimer, isValidFocusSession } from "./focus-model.js";
 
 const DAILY_GOAL = 6;
+let timer = null;
 
-function readFocusSessions() {
-    return readStorage(STORAGE.focusSessions, [], Array.isArray).filter(isValidFocusSession);
+// Called after a backup import, so this page cannot save the replaced timer later.
+function resetFocusTimer() {
+    if (timer) timer.reset();
 }
 
-function withFocusLock(action) {
-    return navigator.locks
-        ? navigator.locks.request("qadam-focus", action)
-        : Promise.resolve().then(action);
+function readFocusSessions() {
+    const saved = readStorage(STORAGE.focusSessions, []);
+    return Array.isArray(saved) ? saved.filter(isValidFocusSession) : [];
 }
 
 function updateFocusStats() {
     if (!document.querySelector("#focus-today-value")) return;
     const sessions = readFocusSessions();
-    const currentDate = getLocalDate();
-    const todaySessions = sessions.filter((session) => session.date === currentDate);
-    const monday = new Date();
-    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-    const weekSessions = sessions.filter((session) => session.date >= getLocalDate(monday) && session.date <= currentDate);
-    const minutesToday = todaySessions.reduce((total, session) => total + session.minutes, 0);
+    const today = getLocalDate();
+    const weekday = new Date(`${today}T12:00:00`).getDay();
+    const monday = addDays(today, -((weekday + 6) % 7));
+
+    const todaySessions = sessions.filter((session) => session.date === today);
+    const weekSessions = sessions.filter((session) => session.date >= monday && session.date <= today);
+    let minutesToday = 0;
+    for (const session of todaySessions) {
+        minutesToday += session.minutes;
+    }
     const totalToday = todaySessions.length;
 
     document.querySelector("#focus-today-value").textContent = `${minutesToday} min`;
@@ -39,107 +44,79 @@ function setupFocusTimer() {
     const pauseButton = document.querySelector("#focus-pause");
     const resetButton = document.querySelector("#focus-reset");
     const status = document.querySelector("#focus-timer-status");
-    const readTimer = () => readStorage(STORAGE.focusTimer, null, isValidFocusTimer);
-    let timer = readTimer();
-    let unsaved = false;
-    let finishing = false;
-    let retryOnReturn = false;
 
-    function render(message) {
+    // The saved timer is restored, so a session continues after a reload.
+    timer = new FocusTimer(readStorage(STORAGE.focusTimer, null));
+    let retryAfter = 0;
+
+    function render() {
         if (!display) return;
-        const seconds = getRemainingSeconds(timer);
-        display.textContent = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-        const running = timer?.status === "running";
-        startButton.disabled = running;
-        pauseButton.disabled = !running;
-        startButton.textContent = timer?.status === "paused" ? "Resume focus"
-            : timer?.status === "completed" ? "Start another session" : "Start focus";
-        if (message) status.textContent = message;
+        display.textContent = timer.getDisplayTime();
+        startButton.disabled = timer.isRunning();
+        pauseButton.disabled = !timer.isRunning() || timer.isFinished();
+        startButton.textContent = timer.isPaused() ? "Resume focus" : "Start focus";
     }
 
-    function describeTimer() {
-        if (timer?.status === "running") return "Focus session running. You can visit other pages and return here.";
-        if (timer?.status === "paused") return "Session paused. Resume whenever you are ready.";
-        if (timer?.status === "completed") return "Session complete. Take a short break.";
-        return "Ready for a 25-minute focus session.";
+    function saveTimer(message) {
+        const saved = writeStorage(STORAGE.focusTimer, timer);
+        if (status) status.textContent = saved ? message : `${message} This timer could not be saved; keep this page open.`;
+        render();
     }
 
-    function saveTimer(next, message) {
-        timer = next;
-        unsaved = !writeStorage(STORAGE.focusTimer, timer);
-        render(unsaved ? `${message} This timer could not be saved; keep this page open.` : message);
-    }
-
-    function finishIfDue() {
-        if (finishing || retryOnReturn || timer?.status !== "running" || getRemainingSeconds(timer) > 0) return;
-        finishing = true;
-        withFocusLock(() => {
-            if (!unsaved) timer = readTimer();
-            if (timer?.status !== "running" || getRemainingSeconds(timer) > 0) return;
-            const sessions = readFocusSessions();
-            const next = addCompletedSession(sessions, timer);
-            const saved = next === sessions || writeStorage(STORAGE.focusSessions, next);
-            if (!saved) {
-                // Keep the expired timer so a later visit can retry saving this session.
-                retryOnReturn = true;
-                render("Session complete, but it could not be saved. Return to this page to retry.");
+    // Records the completed session once and returns the timer to 25:00.
+    function finishSession() {
+        if (Date.now() < retryAfter) return render();
+        const sessions = readFocusSessions();
+        if (!sessions.some((session) => session.id === timer.id)) {
+            sessions.push({ id: timer.id, date: getLocalDate(new Date(timer.deadline)), minutes: SESSION_MINUTES });
+            if (!writeStorage(STORAGE.focusSessions, sessions)) {
+                retryAfter = Date.now() + 30000;
+                if (status) status.textContent = "Session complete, but it could not be saved. Keep this page open to retry.";
+                render();
                 return;
             }
-            saveTimer({ ...timer, status: "completed", remainingSeconds: 0 }, "Session complete and saved. Take a short break.");
-            updateFocusStats();
-        }).finally(() => { finishing = false; });
+        }
+        retryAfter = 0;
+        timer.reset();
+        saveTimer("Session complete and saved. Take a short break.");
+        updateFocusStats();
     }
 
     function tick() {
-        render();
-        finishIfDue();
+        if (timer.isFinished()) finishSession();
+        else render();
     }
 
-    function refresh() {
-        retryOnReturn = false;
-        if (!unsaved) timer = readTimer();
-        render(describeTimer());
-        updateFocusStats();
-        tick();
+    startButton?.addEventListener("click", () => {
+        timer.start();
+        saveTimer("Focus session running. You can visit other pages and return here.");
+    });
+
+    pauseButton?.addEventListener("click", () => {
+        retryAfter = 0;
+        if (timer.isFinished()) return finishSession();
+        timer.pause();
+        saveTimer("Session paused and saved.");
+    });
+
+    resetButton?.addEventListener("click", () => {
+        timer.reset();
+        saveTimer("Timer reset to 25 minutes.");
+    });
+
+    if (status) {
+        if (timer.isRunning()) status.textContent = "Focus session running. You can visit other pages and return here.";
+        else if (timer.isPaused()) status.textContent = "Session paused. Resume whenever you are ready.";
+        else status.textContent = "Ready for a 25-minute focus session.";
     }
 
-    startButton?.addEventListener("click", () => withFocusLock(() => {
-        if (!unsaved) timer = readTimer();
-        if (timer?.status === "running") return refresh();
-        const remainingSeconds = timer?.status === "paused" ? timer.remainingSeconds : SESSION_SECONDS;
-        const id = timer?.status === "paused" ? timer.id : `focus-${crypto.randomUUID()}`;
-        saveTimer({ id, status: "running", remainingSeconds, deadline: Date.now() + remainingSeconds * 1000 },
-            "Focus session running. You can visit other pages and return here.");
-    }));
-
-    pauseButton?.addEventListener("click", () => withFocusLock(() => {
-        if (!unsaved) timer = readTimer();
-        if (timer?.status !== "running") return refresh();
-        const remainingSeconds = getRemainingSeconds(timer);
-        if (remainingSeconds === 0) return tick();
-        saveTimer({ ...timer, status: "paused", deadline: 0, remainingSeconds }, "Session paused and saved.");
-    }));
-
-    resetButton?.addEventListener("click", () => withFocusLock(() => {
-        saveTimer(null, "Timer reset to 25 minutes.");
-    }));
-
-    window.addEventListener("storage", (event) => {
-        if (event.key === STORAGE.focusTimer || event.key === null) {
-            unsaved = false;
-            refresh();
-        } else if (event.key === STORAGE.focusSessions) updateFocusStats();
-    });
-    document.addEventListener("qadam:data-restored", () => {
-        unsaved = false;
-        refresh();
-    });
-    window.addEventListener("focus", refresh);
-    document.addEventListener("visibilitychange", () => {
-        if (!document.hidden) refresh();
-    });
+    updateFocusStats();
+    tick();
     window.setInterval(tick, 1000);
-    refresh();
+    window.addEventListener("focus", () => {
+        retryAfter = 0;
+        tick();
+    });
 }
 
-export { readFocusSessions, setupFocusTimer, withFocusLock };
+export { readFocusSessions, setupFocusTimer, resetFocusTimer };
