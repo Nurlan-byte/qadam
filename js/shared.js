@@ -2,7 +2,9 @@ const STORAGE = {
     theme: "qadam-theme",
     tasks: "qadam-tasks",
     habits: "qadam-habits",
-    focusSessions: "qadam-focus-sessions"
+    focusSessions: "qadam-focus-sessions",
+    focusTimer: "qadam-focus-timer",
+    events: "qadam-events"
 };
 
 function getLocalDate(date = new Date()) {

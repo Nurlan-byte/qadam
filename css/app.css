@@ -315,15 +315,35 @@
     outline-offset: 3px;
 }
 
+/* The home menu needs its own row at enlarged text sizes. */
+.site-header .navbar > .container {
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+}
+
+.site-header .brand,
+.site-header .brand-logo,
+.site-header .navbar-toggler {
+    flex-shrink: 0;
+}
+
+.site-header .brand {
+    white-space: nowrap;
+}
+
 .site-header .appearance-controls {
+    flex: 0 1 auto;
+    justify-content: flex-end;
     margin: 0 0 0 auto;
 }
 
 .site-header .navbar-collapse {
-    flex-basis: 100%;
+    flex: 0 0 100%;
+    min-width: 0;
 }
 
 .site-header .navbar-nav {
+    width: 100%;
     flex-wrap: wrap;
 }
 
@@ -333,6 +353,11 @@
         order: 1;
         flex-basis: 100%;
         margin: 0.75rem 0 0;
+    }
+
+    .site-header .appearance-controls {
+        justify-content: flex-start;
+        margin-top: 0;
     }
 
     .navbar-collapse {
