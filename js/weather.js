@@ -1,4 +1,4 @@
-import { readStorage, writeStorage } from "./shared.js";
+import { STORAGE, readStorage, writeStorage } from "./shared.js";
 import { createForecastDays } from "./weather-model.js";
 
 const cities = {
@@ -6,40 +6,39 @@ const cities = {
     astana: { name: "Astana", latitude: 51.17, longitude: 71.45 },
     shymkent: { name: "Shymkent", latitude: 42.32, longitude: 69.59 }
 };
-const cityStorageKey = "qadam-weather-city";
 
+// Builds one forecast card with DOM methods from a ForecastDay object.
 function buildForecastCard(day) {
     const card = document.createElement("article");
     card.className = "weather-day";
+
     const heading = document.createElement("h3");
     const date = document.createElement("time");
     date.dateTime = day.date;
     date.textContent = day.getDateLabel();
     heading.append(date);
-    card.append(heading);
-    for (const [className, text] of [
-        ["weather-temperature", day.getTemperatureRange()],
-        ["weather-summary", day.getSummary()],
-        ["weather-hint", day.getPlanHint()]
-    ]) {
-        const paragraph = document.createElement("p");
-        paragraph.className = className;
-        paragraph.textContent = text;
-        card.append(paragraph);
-    }
+
+    const temperature = document.createElement("p");
+    temperature.className = "weather-temperature";
+    temperature.textContent = day.getTemperatureRange();
+
+    const summary = document.createElement("p");
+    summary.className = "weather-summary";
+    summary.textContent = day.getSummary();
+
+    const hint = document.createElement("p");
+    hint.className = "weather-hint";
+    hint.textContent = day.getPlanHint();
+
+    card.append(heading, temperature, summary, hint);
     return card;
 }
 
 function getForecastUrl(city) {
-    const url = new URL("https://api.open-meteo.com/v1/forecast");
-    url.search = new URLSearchParams({
-        latitude: city.latitude,
-        longitude: city.longitude,
-        daily: "temperature_2m_max,temperature_2m_min,weather_code",
-        forecast_days: 5,
-        timezone: "auto"
-    });
-    return url;
+    return "https://api.open-meteo.com/v1/forecast"
+        + `?latitude=${city.latitude}&longitude=${city.longitude}`
+        + "&daily=temperature_2m_max,temperature_2m_min,weather_code"
+        + "&forecast_days=5&timezone=auto";
 }
 
 function setupWeather() {
@@ -49,46 +48,50 @@ function setupWeather() {
     const refresh = panel.querySelector("#weather-refresh");
     const status = panel.querySelector("#weather-status");
     const list = panel.querySelector("#weather-days");
-    select.value = readStorage(cityStorageKey, "almaty", (key) => Object.hasOwn(cities, key));
-    let currentRequest = null;
+
+    // Restore the city chosen on the last visit.
+    const savedCity = readStorage(STORAGE.weatherCity, "almaty");
+    select.value = Object.keys(cities).includes(savedCity) ? savedCity : "almaty";
 
     async function loadForecast() {
-        if (currentRequest) currentRequest.abort();
-        const request = new AbortController();
-        currentRequest = request;
         const city = cities[select.value];
-        const timeout = window.setTimeout(() => request.abort(), 12000);
-        panel.setAttribute("aria-busy", "true");
+
+        // Loading state: the controls are disabled until the request ends,
+        // so two requests can never run at the same time.
+        select.disabled = true;
         refresh.disabled = true;
+        panel.setAttribute("aria-busy", "true");
         list.replaceChildren();
         status.textContent = `Loading forecast for ${city.name}…`;
+
         try {
-            const response = await fetch(getForecastUrl(city), { signal: request.signal });
+            const response = await fetch(getForecastUrl(city));
             if (!response.ok) throw new Error("Weather service unavailable");
             const data = await response.json();
             const days = createForecastDays(data.daily);
-            if (currentRequest !== request) return;
-            list.replaceChildren(...days.map(buildForecastCard));
-            status.textContent = days.length
-                ? `${city.name}: ${days.length}-day forecast. Temperatures are in Celsius.`
-                : `No forecast is available for ${city.name}. Try again later.`;
-        } catch (error) {
-            if (currentRequest !== request) return;
-            status.textContent = request.signal.aborted
-                ? "The forecast took too long to load. Please try again."
-                : "The forecast could not be loaded. Check your connection and try again.";
-        } finally {
-            window.clearTimeout(timeout);
-            if (currentRequest === request) {
-                panel.setAttribute("aria-busy", "false");
-                refresh.disabled = false;
-                refresh.textContent = "Refresh forecast";
+
+            if (days.length === 0) {
+                // Empty state
+                status.textContent = `No forecast is available for ${city.name}. Try again later.`;
+            } else {
+                // Success state
+                for (const day of days) {
+                    list.append(buildForecastCard(day));
+                }
+                status.textContent = `${city.name}: ${days.length}-day forecast. Temperatures are in Celsius.`;
             }
+        } catch (error) {
+            // Error state: no network, a bad HTTP status or an unexpected answer.
+            status.textContent = "The forecast could not be loaded. Check your connection and try again.";
+        } finally {
+            select.disabled = false;
+            refresh.disabled = false;
+            panel.setAttribute("aria-busy", "false");
         }
     }
 
     select.addEventListener("change", () => {
-        writeStorage(cityStorageKey, select.value);
+        writeStorage(STORAGE.weatherCity, select.value);
         loadForecast();
     });
     refresh.addEventListener("click", loadForecast);

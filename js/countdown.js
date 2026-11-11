@@ -1,73 +1,43 @@
-import { STORAGE, getLocalDate, isValidDate, readStorage, writeStorage, escapeHTML } from "./shared.js";
-import { eventCategories, eventImages, starterEvents, isValidEvent, normalizeEvent } from "./events-model.js";
+import { STORAGE, getLocalDate, isValidDate, readStorage, writeStorage, escapeHTML, makeId } from "./shared.js";
+import { CountdownEvent, eventCategories, eventImages, starterEvents, isValidEvent } from "./events-model.js";
 
-let events = null;
+let events = [];
 let editingEventId = null;
-let hasUnsavedChanges = false;
-let isSaving = false;
 
-function isValidEventList(saved) {
-    return Array.isArray(saved) && saved.every(isValidEvent)
-        && new Set(saved.map((event) => event.id)).size === saved.length;
-}
+// ---------- Data ----------
 
+// Reads saved records and turns every valid one into a CountdownEvent object.
+// Starter events are used only until the user saves a list of their own.
 function loadEvents() {
-    try {
-        if (localStorage.getItem(STORAGE.events) === null) return starterEvents.map(normalizeEvent);
-    } catch (error) {
-        return readStorage(STORAGE.events, [], isValidEventList).map(normalizeEvent);
-    }
-    return readStorage(STORAGE.events, [], isValidEventList).map(normalizeEvent);
+    const saved = readStorage(STORAGE.events, starterEvents);
+    const records = Array.isArray(saved) ? saved : starterEvents;
+    return records.filter(isValidEvent).map((record) => new CountdownEvent(record));
 }
 
-function getEvents({ reload = false } = {}) {
-    if (events === null || (reload && !hasUnsavedChanges)) events = loadEvents();
-    return events.map((event) => ({ ...event }));
+function saveEvents(message) {
+    const saved = writeStorage(STORAGE.events, events);
+    renderEvents();
+    setEventStatus(saved ? message : `${message} This change could not be saved and will be lost when you reload.`);
 }
 
-function getDaysUntil(dateString) {
-    if (!isValidDate(dateString)) return null;
-    // UTC day indices avoid 23- and 25-hour days at daylight-saving changes.
-    const targetDay = Date.parse(`${dateString}T00:00:00Z`);
-    const todayDay = Date.parse(`${getLocalDate()}T00:00:00Z`);
-    return Math.round((targetDay - todayDay) / 86400000);
+function getEventById(eventId) {
+    return events.find((event) => event.id === eventId);
 }
 
-function updateCountdownLabels() {
-    document.querySelectorAll("[data-countdown-date]").forEach((timeElement) => {
-        const days = getDaysUntil(timeElement.dateTime);
-        const card = timeElement.closest(".countdown-card");
-        const number = card?.querySelector(".countdown-value");
-        const label = card?.querySelector(".countdown-unit");
-        if (!number || !label) return;
-        card.classList.toggle("countdown-past", days !== null && days < 0);
-        if (days === null) {
-            number.textContent = "—";
-            label.textContent = "Date unavailable";
-        } else if (days === 0) {
-            number.textContent = "Today";
-            label.textContent = "";
-        } else {
-            number.textContent = String(Math.abs(days));
-            const unit = Math.abs(days) === 1 ? "day" : "days";
-            label.textContent = `${unit} ${days > 0 ? "left" : "ago"}`;
-        }
-    });
-}
+// ---------- Rendering ----------
 
 function renderEventCard(event) {
-    const image = eventImages[event.image];
+    const image = event.getImage();
     const title = escapeHTML(event.title);
-    const dateLabel = new Intl.DateTimeFormat("en", { day: "numeric", month: "long", year: "numeric" })
-        .format(new Date(`${event.date}T12:00:00`));
+    const countdown = event.getCountdownText();
     return `<li class="col-12 col-md-6">
-        <article class="card countdown-card h-100" data-event-id="${escapeHTML(event.id)}">
+        <article class="card countdown-card h-100${event.isPast() ? " countdown-past" : ""}" data-event-id="${escapeHTML(event.id)}">
             <img src="${image.path}" alt="${image.alt}" class="countdown-image img-fluid">
             <div class="card-body countdown-content">
-                <p class="countdown-category">${eventCategories[event.category]}</p>
+                <p class="countdown-category">${event.getCategoryLabel()}</p>
                 <h3 class="h5">${title}</h3>
-                <p class="countdown-days"><strong class="countdown-value"></strong> <span class="countdown-unit"></span></p>
-                <p><time datetime="${event.date}" data-countdown-date>${dateLabel}</time></p>
+                <p class="countdown-days"><strong class="countdown-value">${countdown.value}</strong> <span class="countdown-unit">${countdown.unit}</span></p>
+                <p><time datetime="${event.date}">${event.getDateLabel()}</time></p>
                 <p class="countdown-description">${escapeHTML(event.description)}</p>
                 <div class="event-actions">
                     <button class="btn btn-outline-light btn-sm" type="button" data-event-action="edit" aria-label="Edit event: ${title}">Edit</button>
@@ -79,46 +49,55 @@ function renderEventCard(event) {
 }
 
 function renderEvents() {
-    const list = document.querySelector("#event-list");
-    if (!list) return;
-    list.innerHTML = getEvents().map(renderEventCard).join("");
+    document.querySelector("#event-list").innerHTML = events.map(renderEventCard).join("");
     document.querySelector("#events-empty").hidden = events.length > 0;
     document.querySelector("#event-count").textContent = `${events.length} ${events.length === 1 ? "event" : "events"}`;
-    updateCountdownLabels();
 }
 
 function setEventStatus(message) {
-    const status = document.querySelector("#event-status");
-    if (status) status.textContent = message;
+    document.querySelector("#event-status").textContent = message;
 }
 
-function saveEvents(message) {
-    isSaving = true;
-    const saved = writeStorage(STORAGE.events, events);
-    isSaving = false;
-    hasUnsavedChanges = !saved;
-    renderEvents();
-    setEventStatus(saved ? message : `${message} This change could not be saved and will be lost when you reload.`);
-}
+// ---------- Form and validation ----------
 
 function showFieldError(field, message) {
-    field.classList.toggle("is-invalid", Boolean(message));
-    field.setAttribute("aria-invalid", String(Boolean(message)));
+    field.classList.toggle("is-invalid", message !== "");
+    field.setAttribute("aria-invalid", String(message !== ""));
     document.querySelector(`#${field.id}-error`).textContent = message;
+}
+
+function getTitleError(title) {
+    if (title.length < 3) return "Enter at least 3 characters.";
+    if (title.length > 80) return "Use no more than 80 characters.";
+    return "";
 }
 
 function validateEventForm(form) {
     const fields = form.elements;
-    const title = fields.title.value.trim();
     const errors = [
-        [fields.title, title.length < 3 ? "Enter at least 3 characters." : title.length > 80 ? "Use no more than 80 characters." : ""],
-        [fields.date, !isValidDate(fields.date.value) ? "Choose a valid date with a four-digit year." : ""],
+        [fields.title, getTitleError(fields.title.value.trim())],
+        [fields.date, isValidDate(fields.date.value) ? "" : "Choose a valid date with a four-digit year."],
         [fields.description, fields.description.value.trim().length > 240 ? "Use no more than 240 characters." : ""],
-        [fields.category, !Object.hasOwn(eventCategories, fields.category.value) ? "Choose an event category." : ""],
-        [fields.image, !Object.hasOwn(eventImages, fields.image.value) ? "Choose one of the event photos." : ""]
+        [fields.category, Object.keys(eventCategories).includes(fields.category.value) ? "" : "Choose an event category."],
+        [fields.image, Object.keys(eventImages).includes(fields.image.value) ? "" : "Choose one of the event photos."]
     ];
-    errors.forEach(([field, message]) => showFieldError(field, message));
-    return errors.every(([, message]) => !message);
+
+    let valid = true;
+    for (const [field, message] of errors) {
+        showFieldError(field, message);
+        if (message) valid = false;
+    }
+    return valid;
+}
+
+function readEventForm(form) {
+    return {
+        title: form.elements.title.value.trim(),
+        date: form.elements.date.value,
+        description: form.elements.description.value.trim(),
+        category: form.elements.category.value,
+        image: form.elements.image.value
+    };
 }
 
 function resetEventForm() {
@@ -132,13 +111,19 @@ function resetEventForm() {
     document.querySelector("#event-cancel").hidden = true;
 }
 
-function editEvent(id) {
-    const event = getEvents({ reload: true }).find((item) => item.id === id);
+// ---------- Actions ----------
+
+function editEvent(eventId) {
+    const event = getEventById(eventId);
     if (!event) return;
     resetEventForm();
-    editingEventId = event.id;
+    editingEventId = eventId;
     const form = document.querySelector("#event-form");
-    for (const name of ["title", "date", "description", "category", "image"]) form.elements[name].value = event[name];
+    form.elements.title.value = event.title;
+    form.elements.date.value = event.date;
+    form.elements.description.value = event.description;
+    form.elements.category.value = event.category;
+    form.elements.image.value = event.image;
     document.querySelector("#event-form-title").textContent = "Edit event";
     document.querySelector("#event-submit").textContent = "Save changes";
     document.querySelector("#event-cancel").hidden = false;
@@ -146,84 +131,65 @@ function editEvent(id) {
     form.elements.title.focus();
 }
 
-function deleteEvent(id) {
-    const current = getEvents({ reload: true });
-    const event = current.find((item) => item.id === id);
+function deleteEvent(eventId) {
+    const event = getEventById(eventId);
     if (!event || !window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return;
-    events = current.filter((item) => item.id !== id);
-    if (editingEventId === id) resetEventForm();
+    events = events.filter((item) => item.id !== eventId);
+    if (editingEventId === eventId) resetEventForm();
     saveEvents(`Deleted ${event.title}.`);
-    document.querySelector("#event-title").focus();
 }
 
-function submitEvent(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
+function submitEvent(submitEventObject) {
+    submitEventObject.preventDefault();
+    const form = submitEventObject.currentTarget;
     if (!validateEventForm(form)) {
-        form.querySelector(".is-invalid")?.focus();
+        form.querySelector(".is-invalid").focus();
         return;
     }
-    const current = getEvents({ reload: true });
-    if (editingEventId && !current.some((item) => item.id === editingEventId)) {
-        resetEventForm();
-        renderEvents();
-        setEventStatus("This event was removed in another tab. Add a new event if needed.");
-        return;
-    }
-    const record = { id: editingEventId || `event-${crypto.randomUUID()}` };
-    for (const name of ["title", "date", "description", "category", "image"]) record[name] = form.elements[name].value.trim();
-    const editing = editingEventId !== null;
-    events = editing ? current.map((item) => item.id === record.id ? record : item) : [...current, record];
-    resetEventForm();
-    saveEvents(editing ? "Event updated." : "Event added.");
-    form.elements.title.focus();
-}
 
-function refreshEvents() {
-    getEvents({ reload: true });
-    renderEvents();
+    const values = readEventForm(form);
+    const event = getEventById(editingEventId);
+    let message = "Event added.";
+    if (event) {
+        event.update(values);
+        message = "Event updated.";
+    } else {
+        events.push(new CountdownEvent({ id: makeId("event"), ...values }));
+    }
+    resetEventForm();
+    saveEvents(message);
+    form.elements.title.focus();
 }
 
 function setupCountdowns() {
     const list = document.querySelector("#event-list");
     const form = document.querySelector("#event-form");
     if (!list || !form) return;
-    refreshEvents();
+
+    events = loadEvents();
+    renderEvents();
     resetEventForm();
+
     form.addEventListener("submit", submitEvent);
     form.querySelectorAll("input, select, textarea").forEach((field) => {
         field.addEventListener("input", () => showFieldError(field, ""));
-        field.addEventListener("change", () => showFieldError(field, ""));
     });
     document.querySelector("#event-cancel").addEventListener("click", () => {
         resetEventForm();
         setEventStatus("Editing cancelled. No changes were saved.");
-        form.elements.title.focus();
     });
+
+    // One listener on the list handles the buttons of every card.
     list.addEventListener("click", (event) => {
         const button = event.target.closest("[data-event-action]");
-        const card = button?.closest("[data-event-id]");
-        if (!card) return;
-        if (button.dataset.eventAction === "edit") editEvent(card.dataset.eventId);
-        if (button.dataset.eventAction === "delete") deleteEvent(card.dataset.eventId);
+        if (!button) return;
+        const eventId = button.closest("[data-event-id]").dataset.eventId;
+        if (button.dataset.eventAction === "edit") editEvent(eventId);
+        else deleteEvent(eventId);
     });
-    window.addEventListener("storage", (event) => {
-        if (event.key === STORAGE.events || event.key === null) refreshEvents();
-    });
-    document.addEventListener("qadam:data-changed", (event) => {
-        if (event.detail?.key === STORAGE.events && !isSaving) refreshEvents();
-    });
-    document.addEventListener("qadam:data-restored", () => {
-        hasUnsavedChanges = false;
-        resetEventForm();
-        refreshEvents();
-        setEventStatus("Events restored from your backup.");
-    });
-    window.addEventListener("focus", refreshEvents);
-    document.addEventListener("visibilitychange", () => {
-        if (!document.hidden) refreshEvents();
-    });
-    window.setInterval(updateCountdownLabels, 60000);
+
+    // Refresh the "days left" numbers in case the page stays open past midnight.
+    window.setInterval(renderEvents, 60000);
 }
 
-export { getDaysUntil, setupCountdowns, getEvents, isValidEvent };
+export { setupCountdowns, loadEvents };
