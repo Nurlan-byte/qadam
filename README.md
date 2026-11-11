@@ -14,6 +14,18 @@ python3 -m http.server 8000
 
 Open `http://localhost:8000`. No build step or package installation is needed. Use an HTTP server because JavaScript modules do not load from `file://` URLs. Internet access is needed for the Bootstrap, Bootstrap Icons, Google Fonts and jQuery CDNs, and for the weather service.
 
+## Test the interactive features
+
+Use test records in a separate browser profile. Check the browser console for errors while following these steps.
+
+1. Visit all seven pages and test navigation at a narrow screen width. Change the theme and text size, then reload: both preferences should remain selected.
+2. On Today, submit an empty or short task title: a specific field error should prevent saving. Add a valid task with notes, then search, filter, complete and favorite it. Open its details to see the slide effect; delete it to see the fade effect, then use Undo.
+3. Edit the task and reload to check persistence. Cancel another edit and confirm the task is unchanged. Clear the test task list and reload: it should stay empty.
+4. Create, edit, cancel an edit and delete test habits and events. Check a habit on Today, then open Habits: its check-in and history should agree. Reload to confirm saved changes; check an event's countdown before, on and after its date.
+5. Add dated tasks and check their counts and details in Calendar. Try arrow keys, Page Up, Page Down and Today. Observe the weather loading state and forecast cards, change city and refresh. After the page loads, switch the browser offline and refresh the forecast: an error should appear and retry should remain available. Reconnect and retry.
+6. Start Focus, reload, pause, reload again and resume: the remaining time should persist. Test Reset. Complete a session and compare its totals with Statistics; use Refresh to update the dashboard.
+7. On Statistics, export a backup, select it and verify the preview counts. Cancel once, then import it and compare the restored data. Select malformed JSON: it should be rejected without changing saved records.
+
 ## Pages
 
 | Page | Purpose |
@@ -56,9 +68,9 @@ The Calendar page uses the public [Open-Meteo Weather Forecast API](https://open
 | Class | File | Properties | Methods |
 | --- | --- | --- | --- |
 | `Task` | `js/task-model.js` | id, title, date, time, list, notes, completed, favorite | `setCompleted`, `toggleFavorite`, `update`, `getGroup`, `isOverdue`, `matchesSearch`, `matchesFilters`, `getCategoryLabel` |
-| `Habit` | `js/habit-model.js` | id, title, period, dates | `isDoneOn`, `setDone`, `rename`, `getStreak`, `getLongestRun` |
+| `Habit` | `js/habit-model.js` | id, title, period, dates, legacyStreak | `isDoneOn`, `setDone`, `rename`, `getStreak`, `getLongestRun` |
 | `CountdownEvent` | `js/events-model.js` | id, title, date, description, category, image | `getDaysLeft`, `isPast`, `getCountdownText`, `getDateLabel`, `getCategoryLabel`, `getImage`, `update` |
-| `FocusTimer` | `js/focus-model.js` | status, remainingSeconds, deadline | `start`, `pause`, `reset`, `getRemainingSeconds`, `isRunning`, `isPaused`, `isFinished`, `getDisplayTime` |
+| `FocusTimer` | `js/focus-model.js` | id, status, remainingSeconds, deadline | `start`, `pause`, `reset`, `getRemainingSeconds`, `isRunning`, `isPaused`, `isFinished`, `getDisplayTime` |
 | `ForecastDay` | `js/weather-model.js` | date, minimum, maximum, code | `getDateLabel`, `getTemperatureRange`, `getSummary`, `isGoodForOutdoors`, `getPlanHint` |
 
 Records read from `localStorage` are plain objects. Each page module checks them and creates class objects with `new`, for example `records.filter(isValidTask).map((record) => new Task(record))`. The objects are saved back with `JSON.stringify`.
@@ -95,12 +107,16 @@ Saved data stays in this browser. There is no backend. The keys are `qadam-tasks
 - An empty saved list stays empty; starter records do not come back.
 - If the browser refuses to save, the page shows a warning.
 - "Clear all tasks" removes tasks only. Undo keeps one deleted task until the page is reloaded.
+- Changes made in another tab appear after reloading the page.
+- Older habit streak totals are preserved separately from recorded dates; missing dates are not invented.
 
 ## Backup and restore
 
 On Statistics, **Export backup** downloads a JSON file with `app: "qadam"`, `version: 1`, an export date and four lists: tasks, habits, events and completed focus sessions.
 
 Choosing a file checks it and shows how many records it contains. After confirmation the four lists are replaced and the focus timer is reset. An invalid file changes nothing. Theme, text size and weather city are not part of the backup.
+
+Backup files are limited to 2 MB. If an import cannot finish saving, the app attempts to restore the previous data and reports whether that recovery succeeded.
 
 ## Team
 

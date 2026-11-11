@@ -11,7 +11,12 @@ let editingHabitId = null;
 function loadHabits() {
     const saved = readStorage(STORAGE.habits, defaultHabits);
     const records = Array.isArray(saved) ? saved : defaultHabits;
-    return records.filter(isValidHabit).map((record) => new Habit(record));
+    const ids = new Set();
+    return records.filter((record) => {
+        if (!isValidHabit(record) || ids.has(record.id)) return false;
+        ids.add(record.id);
+        return true;
+    }).map((record) => new Habit(record));
 }
 
 function saveHabits(message) {
@@ -297,6 +302,11 @@ function setupHabits() {
         if (!habit) return;
         habit.setDone(getLocalDate(), checkbox.checked);
         saveHabits(`${habit.title}: ${checkbox.checked ? "checked in" : "check-in removed"}.`);
+    });
+    // Today may have changed while this page was in the background.
+    window.addEventListener("focus", renderHabits);
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) renderHabits();
     });
 }
 

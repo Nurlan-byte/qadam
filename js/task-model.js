@@ -13,7 +13,7 @@ function getCategoryLabel(categoryId) {
 // Checks a plain record (from localStorage or a backup file) before it becomes a Task.
 function isValidTask(data) {
     if (!data || typeof data !== "object") return false;
-    if (typeof data.id !== "string" || data.id === "") return false;
+    if (typeof data.id !== "string" || !/^[a-zA-Z0-9_-]{1,100}$/.test(data.id)) return false;
     if (typeof data.title !== "string" || data.title.trim().length < 3 || data.title.length > 80) return false;
     if (!isValidDate(data.date)) return false;
     if (typeof data.time !== "string" || !isValidTime(data.time)) return false;

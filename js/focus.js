@@ -2,6 +2,12 @@ import { STORAGE, getLocalDate, addDays, readStorage, writeStorage } from "./sha
 import { SESSION_MINUTES, FocusTimer, isValidFocusSession } from "./focus-model.js";
 
 const DAILY_GOAL = 6;
+let timer = null;
+
+// Called after a backup import, so this page cannot save the replaced timer later.
+function resetFocusTimer() {
+    if (timer) timer.reset();
+}
 
 function readFocusSessions() {
     const saved = readStorage(STORAGE.focusSessions, []);
@@ -9,6 +15,7 @@ function readFocusSessions() {
 }
 
 function updateFocusStats() {
+    if (!document.querySelector("#focus-today-value")) return;
     const sessions = readFocusSessions();
     const today = getLocalDate();
     const weekday = new Date(`${today}T12:00:00`).getDay();
@@ -33,33 +40,43 @@ function updateFocusStats() {
 
 function setupFocusTimer() {
     const display = document.querySelector("#focus-time-display");
-    if (!display) return;
     const startButton = document.querySelector("#focus-start");
     const pauseButton = document.querySelector("#focus-pause");
     const resetButton = document.querySelector("#focus-reset");
     const status = document.querySelector("#focus-timer-status");
 
     // The saved timer is restored, so a session continues after a reload.
-    const timer = new FocusTimer(readStorage(STORAGE.focusTimer, null));
+    timer = new FocusTimer(readStorage(STORAGE.focusTimer, null));
+    let retryAfter = 0;
 
     function render() {
+        if (!display) return;
         display.textContent = timer.getDisplayTime();
         startButton.disabled = timer.isRunning();
-        pauseButton.disabled = !timer.isRunning();
+        pauseButton.disabled = !timer.isRunning() || timer.isFinished();
         startButton.textContent = timer.isPaused() ? "Resume focus" : "Start focus";
     }
 
     function saveTimer(message) {
         const saved = writeStorage(STORAGE.focusTimer, timer);
-        status.textContent = saved ? message : `${message} This timer could not be saved; keep this page open.`;
+        if (status) status.textContent = saved ? message : `${message} This timer could not be saved; keep this page open.`;
         render();
     }
 
     // Records the completed session once and returns the timer to 25:00.
     function finishSession() {
+        if (Date.now() < retryAfter) return render();
         const sessions = readFocusSessions();
-        sessions.push({ date: getLocalDate(new Date(timer.deadline)), minutes: SESSION_MINUTES });
-        writeStorage(STORAGE.focusSessions, sessions);
+        if (!sessions.some((session) => session.id === timer.id)) {
+            sessions.push({ id: timer.id, date: getLocalDate(new Date(timer.deadline)), minutes: SESSION_MINUTES });
+            if (!writeStorage(STORAGE.focusSessions, sessions)) {
+                retryAfter = Date.now() + 30000;
+                if (status) status.textContent = "Session complete, but it could not be saved. Keep this page open to retry.";
+                render();
+                return;
+            }
+        }
+        retryAfter = 0;
         timer.reset();
         saveTimer("Session complete and saved. Take a short break.");
         updateFocusStats();
@@ -70,28 +87,36 @@ function setupFocusTimer() {
         else render();
     }
 
-    startButton.addEventListener("click", () => {
+    startButton?.addEventListener("click", () => {
         timer.start();
         saveTimer("Focus session running. You can visit other pages and return here.");
     });
 
-    pauseButton.addEventListener("click", () => {
+    pauseButton?.addEventListener("click", () => {
+        retryAfter = 0;
+        if (timer.isFinished()) return finishSession();
         timer.pause();
         saveTimer("Session paused and saved.");
     });
 
-    resetButton.addEventListener("click", () => {
+    resetButton?.addEventListener("click", () => {
         timer.reset();
         saveTimer("Timer reset to 25 minutes.");
     });
 
-    if (timer.isRunning()) status.textContent = "Focus session running. You can visit other pages and return here.";
-    else if (timer.isPaused()) status.textContent = "Session paused. Resume whenever you are ready.";
-    else status.textContent = "Ready for a 25-minute focus session.";
+    if (status) {
+        if (timer.isRunning()) status.textContent = "Focus session running. You can visit other pages and return here.";
+        else if (timer.isPaused()) status.textContent = "Session paused. Resume whenever you are ready.";
+        else status.textContent = "Ready for a 25-minute focus session.";
+    }
 
     updateFocusStats();
     tick();
     window.setInterval(tick, 1000);
+    window.addEventListener("focus", () => {
+        retryAfter = 0;
+        tick();
+    });
 }
 
-export { readFocusSessions, setupFocusTimer };
+export { readFocusSessions, setupFocusTimer, resetFocusTimer };

@@ -14,7 +14,12 @@ let deletedTask = null;
 function loadTasks() {
     const saved = readStorage(STORAGE.tasks, defaultTasks);
     const records = Array.isArray(saved) ? saved : defaultTasks;
-    return records.filter(isValidTask).map((record) => new Task(record));
+    const ids = new Set();
+    return records.filter((record) => {
+        if (!isValidTask(record) || ids.has(record.id)) return false;
+        ids.add(record.id);
+        return true;
+    }).map((record) => new Task(record));
 }
 
 function saveTasks(message) {

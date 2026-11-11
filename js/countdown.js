@@ -11,7 +11,16 @@ let editingEventId = null;
 function loadEvents() {
     const saved = readStorage(STORAGE.events, starterEvents);
     const records = Array.isArray(saved) ? saved : starterEvents;
-    return records.filter(isValidEvent).map((record) => new CountdownEvent(record));
+    const restored = [];
+    const ids = new Set();
+    for (const record of records) {
+        // Keep the first valid record for each id so each card has its own actions.
+        if (isValidEvent(record) && !ids.has(record.id)) {
+            restored.push(new CountdownEvent(record));
+            ids.add(record.id);
+        }
+    }
+    return restored;
 }
 
 function saveEvents(message) {
@@ -52,6 +61,18 @@ function renderEvents() {
     document.querySelector("#event-list").innerHTML = events.map(renderEventCard).join("");
     document.querySelector("#events-empty").hidden = events.length > 0;
     document.querySelector("#event-count").textContent = `${events.length} ${events.length === 1 ? "event" : "events"}`;
+}
+
+// Update the countdown without replacing the buttons or losing keyboard focus.
+function updateCountdownLabels() {
+    for (const card of document.querySelectorAll("#event-list [data-event-id]")) {
+        const event = getEventById(card.dataset.eventId);
+        if (!event) continue;
+        const countdown = event.getCountdownText();
+        card.querySelector(".countdown-value").textContent = countdown.value;
+        card.querySelector(".countdown-unit").textContent = countdown.unit;
+        card.classList.toggle("countdown-past", event.isPast());
+    }
 }
 
 function setEventStatus(message) {
@@ -189,7 +210,7 @@ function setupCountdowns() {
     });
 
     // Refresh the "days left" numbers in case the page stays open past midnight.
-    window.setInterval(renderEvents, 60000);
+    window.setInterval(updateCountdownLabels, 60000);
 }
 
 export { setupCountdowns, loadEvents };
