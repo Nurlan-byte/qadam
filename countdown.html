@@ -70,71 +70,60 @@
             <p class="page-subtitle">Keep your important dates in sight.</p>
         </header>
 
-        <section class="mb-4" aria-labelledby="countdown-events-title">
-            <h2 id="countdown-events-title" class="h5 mb-3">Events</h2>
-            <p class="text-secondary">
-                Days remaining update automatically from each event date.
-            </p>
+        <p class="event-status" id="event-status" role="status" aria-live="polite"></p>
+        <div class="row g-4">
+            <section class="col-xl-8" aria-labelledby="countdown-events-title">
+                <h2 id="countdown-events-title" class="h5 mb-2">Events <span class="event-count" id="event-count"></span></h2>
+                <p class="text-secondary">Days remaining update automatically. Add your dates or edit the starter events.</p>
+                <p class="panel text-secondary" id="events-empty" hidden>No events yet. Add a date using the event form.</p>
+                <ul class="row g-4 event-list" id="event-list"></ul>
+            </section>
 
-            <div class="row g-4">
-                <div class="col-12 col-md-6 col-lg-4">
-                    <article class="card countdown-card h-100">
-                        <img src="images/countdown-study.jpg" alt="Open books on a study desk" class="countdown-image img-fluid">
-                        <div class="card-body countdown-content">
-                            <p class="countdown-category">Study</p>
-                            <h3 class="h5">Midterm submission</h3>
-                            <p class="countdown-days">
-                                <strong class="countdown-value">14</strong> <span class="countdown-unit">days left</span>
-                            </p>
-                            <p>
-                                <time datetime="2026-10-14" data-countdown-date>14 October 2026</time>
-                            </p>
-                            <p class="countdown-description mb-0">
-                                Submit the Qadam project on Moodle.
-                            </p>
+            <aside class="col-xl-4" aria-labelledby="event-form-title">
+                <section class="panel event-form-panel">
+                    <h2 class="h5 mb-3" id="event-form-title">New event</h2>
+                    <form id="event-form" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label" for="event-title">Title</label>
+                            <input class="form-control" id="event-title" name="title" type="text" minlength="3" maxlength="80" required aria-describedby="event-title-error" placeholder="What are you looking forward to?">
+                            <small class="field-error" id="event-title-error"></small>
                         </div>
-                    </article>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4">
-                    <article class="card countdown-card h-100">
-                        <img src="images/countdown-team.jpg" alt="Team working together with laptops" class="countdown-image img-fluid">
-                        <div class="card-body countdown-content">
-                            <p class="countdown-category">Teamwork</p>
-                            <h3 class="h5">Team review</h3>
-                            <p class="countdown-days">
-                                <strong class="countdown-value">9</strong> <span class="countdown-unit">days left</span>
-                            </p>
-                            <p>
-                                <time datetime="2026-10-09" data-countdown-date>9 October 2026</time>
-                            </p>
-                            <p class="countdown-description mb-0">
-                                Check all pages together before submission.
-                            </p>
+                        <div class="mb-3">
+                            <label class="form-label" for="event-date">Date</label>
+                            <input class="form-control" id="event-date" name="date" type="date" min="0001-01-01" max="9999-12-31" required aria-describedby="event-date-error">
+                            <small class="field-error" id="event-date-error"></small>
                         </div>
-                    </article>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4">
-                    <article class="card countdown-card h-100">
-                        <img src="images/countdown-trip.jpg" alt="Mountain landscape for an outdoor trip" class="countdown-image img-fluid">
-                        <div class="card-body countdown-content">
-                            <p class="countdown-category">Personal</p>
-                            <h3 class="h5">Weekend trip</h3>
-                            <p class="countdown-days">
-                                <strong class="countdown-value">17</strong> <span class="countdown-unit">days left</span>
-                            </p>
-                            <p>
-                                <time datetime="2026-10-17" data-countdown-date>17 October 2026</time>
-                            </p>
-                            <p class="countdown-description mb-0">
-                                Take a break and spend time outdoors.
-                            </p>
+                        <div class="mb-3">
+                            <label class="form-label" for="event-category">Category</label>
+                            <select class="form-select" id="event-category" name="category" aria-describedby="event-category-error">
+                                <option value="study">Study</option>
+                                <option value="teamwork">Teamwork</option>
+                                <option value="personal">Personal</option>
+                            </select>
+                            <small class="field-error" id="event-category-error"></small>
                         </div>
-                    </article>
-                </div>
-            </div>
-        </section>
+                        <div class="mb-3">
+                            <label class="form-label" for="event-image">Photo</label>
+                            <select class="form-select" id="event-image" name="image" aria-describedby="event-image-error">
+                                <option value="study">Study desk</option>
+                                <option value="team">Teamwork</option>
+                                <option value="trip">Mountain trip</option>
+                            </select>
+                            <small class="field-error" id="event-image-error"></small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="event-description">Description</label>
+                            <textarea class="form-control" id="event-description" name="description" rows="3" maxlength="240" aria-describedby="event-description-error" placeholder="Optional details"></textarea>
+                            <small class="field-error" id="event-description-error"></small>
+                        </div>
+                        <div class="event-form-actions">
+                            <button class="btn btn-qadam" id="event-submit" type="submit">Add event</button>
+                            <button class="btn btn-outline-light" id="event-cancel" type="button" hidden>Cancel editing</button>
+                        </div>
+                    </form>
+                </section>
+            </aside>
+        </div>
 
         <footer class="app-footer">
             <p class="mb-0">&copy; 2026 Qadam. Web Technologies 1.</p>
