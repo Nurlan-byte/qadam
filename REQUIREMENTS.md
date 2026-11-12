@@ -25,10 +25,10 @@ This checklist shows where each course requirement is implemented.
 | JavaScript form validation | Today task form: title 3–80 characters, valid date, optional valid time, known list, notes up to 240 characters |
 | Messages near fields; invalid submit blocked | `validateTaskForm` and `showFieldError` in `js/tasks.js` |
 | Success feedback | "Task added. Saved in this browser." under the form |
-| jQuery inclusion and selectors | Loaded on Today; `$("#task-list")` and class selectors in `setupTaskJQuery` |
-| DOM traversal | `closest` and `find` |
-| Events handled with jQuery | Delegated `click` and `change` on task cards |
-| Effects | `fadeOut` on deletion and `slideToggle` for task details |
+| jQuery inclusion and selectors | Loaded on Today (`js/tasks.js`). ID `$("#task-list")`, class `.task-card`, attribute + descendant `$("[data-task-section] .task-group-toggle")`, element + descendant `$("#task-form textarea")` |
+| DOM traversal | `closest`, `find`, `parent`, `next` and `siblings` |
+| Events handled with jQuery | Delegated `click` and `change` on task cards; `click` on group headings; `input` on the notes field |
+| Effects | `fadeOut` on deletion, `slideToggle` for task details and for opening/closing task groups, `slideDown`/`slideUp` for the Undo panel |
 
 ## Final-stage features
 

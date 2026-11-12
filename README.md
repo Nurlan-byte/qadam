@@ -19,7 +19,7 @@ Open `http://localhost:8000`. No build step or package installation is needed. U
 Use test records in a separate browser profile. Check the browser console for errors while following these steps.
 
 1. Visit all seven pages and test navigation at a narrow screen width. Change the theme and text size, then reload: both preferences should remain selected.
-2. On Today, submit an empty or short task title: a specific field error should prevent saving. Add a valid task with notes, then search, filter, complete and favorite it. Open its details to see the slide effect; delete it to see the fade effect, then use Undo.
+2. On Today, submit an empty or short task title: a specific field error should prevent saving. Type notes and watch the character counter (it turns orange near 240). Add a valid task with notes, then search, filter, complete and favorite it. Open its details to see the slide effect; delete it to see the fade effect and the Undo panel slide in, then use Undo. Click a group heading (Overdue, Today, Upcoming, Completed) to close and open that list.
 3. Edit the task and reload to check persistence. Cancel another edit and confirm the task is unchanged. Clear the test task list and reload: it should stay empty.
 4. Create, edit, cancel an edit and delete test habits and events. Check a habit on Today, then open Habits: its check-in and history should agree. Reload to confirm saved changes; check an event's countdown before, on and after its date.
 5. Add dated tasks and check their counts and details in Calendar. Try arrow keys, Page Up, Page Down and Today. Observe the weather loading state and forecast cards, change city and refresh. After the page loads, switch the browser offline and refresh the forecast: an error should appear and retry should remain available. Reconnect and retry.
@@ -52,7 +52,20 @@ Calendar reads the same saved tasks as Today. Habits and Today share the same ch
 8. **Persistent focus timer:** a running or paused session is restored after a reload or a visit to another page.
 9. **JSON backup:** export tasks, habits, events and focus sessions to a file; a chosen file is checked and previewed before it replaces the saved data.
 
-Form validation, jQuery effects on the task list and the Bootstrap layout from the earlier stages remain part of the same application.
+Form validation, jQuery interactions on the Today page and the Bootstrap layout from the earlier stages remain part of the same application.
+
+## jQuery on the Today page
+
+All jQuery code is in `setupTaskJQuery` and the helpers next to it in `js/tasks.js`.
+
+| Interaction | Event | Selectors and traversal | Effect |
+| --- | --- | --- | --- |
+| Complete, favorite or edit a task | `change`, `click` (delegated on `#task-list`) | `$(this).closest(".task-card")` | — |
+| Delete a task | `click` | `closest`, `find("button, input")` | `fadeOut` |
+| Show task details | `click` | `closest(".task-card").find(".task-notes")` | `slideToggle` |
+| Close or open a task group | `click` | `$("[data-task-section] .task-group-toggle")`, `parent().next(".today-list")` | `slideToggle` |
+| Notes character counter | `input` | `$("#task-form textarea").siblings(".char-count")` | — |
+| Undo panel after a deletion | — | `$("#task-undo-panel").find("p")` | `slideDown` / `slideUp` |
 
 ## API
 
@@ -92,6 +105,7 @@ Records read from `localStorage` are plain objects. Each page module checks them
 | `js/events-model.js` | `CountdownEvent` class, categories, images and starter events |
 | `js/countdown.js` | Event list, form and CRUD |
 | `js/theme.js` | Theme and text-size preferences |
+| `js/theme-preload.js` | Applies the saved theme and text size in `<head>`, before the page is drawn |
 | `js/weather-model.js` | `ForecastDay` class and API answer check |
 | `js/weather.js` | Forecast request and weather cards |
 | `js/statistics.js` | Summary numbers and bar charts |
