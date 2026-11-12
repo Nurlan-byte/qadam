@@ -2,6 +2,10 @@ import { STORAGE, getLocalDate, isValidDate, readStorage, writeStorage, escapeHT
 import { categories, defaultTasks } from "./data.js";
 import { Task, isValidTask, isValidTime } from "./task-model.js";
 
+// jQuery is loaded only on the Today page, the only page that uses it.
+const $ = window.jQuery;
+const NOTES_LIMIT = 240;
+
 let tasks = [];
 let favoritesOnly = false;
 let editingTaskId = null;
@@ -108,11 +112,20 @@ function renderTasks() {
     todayLabel.textContent = new Date(`${today}T12:00:00`).toLocaleDateString("en", { weekday: "long", day: "numeric", month: "long" });
 }
 
+// The Undo panel slides in after a deletion and slides away after Undo or "Clear all".
 function renderTaskUndo() {
-    document.querySelector("#task-undo-panel").hidden = deletedTask === null;
-    document.querySelector("#task-undo-message").textContent = deletedTask
-        ? `Deleted "${deletedTask.task.title}". Undo is available on this page.`
-        : "";
+    const $panel = $("#task-undo-panel");
+    $panel.stop(true, true);
+
+    if (deletedTask) {
+        $panel.find("p").text(`Deleted "${deletedTask.task.title}". Undo is available on this page.`);
+        $panel.prop("hidden", false).hide().slideDown(200);
+    } else {
+        $panel.slideUp(200, () => {
+            $panel.prop("hidden", true);
+            $panel.find("p").text("");
+        });
+    }
 }
 
 // ---------- Form and validation ----------
@@ -150,7 +163,7 @@ function validateTaskForm(form) {
         [date, getDateError(date.value)],
         [time, time.validity.badInput || !isValidTime(time.value) ? "Enter a valid time." : ""],
         [list, knownCategory ? "" : "Choose a task list."],
-        [notes, notes.value.trim().length > 240 ? "Use no more than 240 characters." : ""]
+        [notes, notes.value.trim().length > NOTES_LIMIT ? `Use no more than ${NOTES_LIMIT} characters.` : ""]
     ];
 
     let valid = true;
@@ -159,6 +172,15 @@ function validateTaskForm(form) {
         if (message) valid = false;
     }
     return valid;
+}
+
+// Shows how many characters the notes use; the counter turns orange near the limit.
+function updateNotesCounter() {
+    const $notes = $("#task-form textarea");
+    const length = $notes.val().length;
+    $notes.siblings(".char-count")
+        .text(`${length} / ${NOTES_LIMIT} characters`)
+        .toggleClass("char-count-near", length >= NOTES_LIMIT - 20);
 }
 
 function readTaskForm(form) {
@@ -180,6 +202,7 @@ function resetTaskForm(form) {
     form.querySelector("#task-submit").textContent = "Add task";
     form.querySelector("#task-cancel").hidden = true;
     form.querySelector("#task-form-status").textContent = "";
+    updateNotesCounter();
 }
 
 function startEditingTask(taskId) {
@@ -193,6 +216,7 @@ function startEditingTask(taskId) {
     form.querySelector("#task-time").value = task.time;
     form.querySelector("#task-list-category").value = task.list;
     form.querySelector("#task-notes").value = task.notes;
+    updateNotesCounter();
     document.querySelector("#today-form-title").textContent = "Edit task";
     form.querySelector("#task-submit").textContent = "Save changes";
     form.querySelector("#task-cancel").hidden = false;
@@ -295,8 +319,18 @@ function setupTaskForm(form) {
 
 // jQuery: delegated clicks on the task list, with fade and slide effects.
 function setupTaskJQuery() {
-    const $ = window.jQuery;
     const $taskList = $("#task-list");
+
+    // Each group heading opens or closes its list. The list stays closed
+    // while the tasks inside it are re-rendered.
+    $("[data-task-section] .task-group-toggle").on("click", function () {
+        const $toggle = $(this);
+        const expanded = $toggle.attr("aria-expanded") === "true";
+        $toggle.parent().next(".today-list").slideToggle(200);
+        $toggle.attr("aria-expanded", String(!expanded));
+    });
+
+    $("#task-form textarea").on("input", updateNotesCounter);
 
     $taskList.on("change", ".today-check", function () {
         const task = getTaskById($(this).closest(".task-card").attr("data-task-id"));

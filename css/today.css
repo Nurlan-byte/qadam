@@ -178,3 +178,50 @@
   flex: 1 1 12rem;
   overflow-wrap: anywhere;
 }
+
+/* Group headings work as buttons that open and close their task list. */
+.task-group-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.task-group-icon {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.task-group-toggle[aria-expanded="false"] .task-group-icon {
+  transform: rotate(-90deg);
+}
+
+.task-group-toggle:focus-visible {
+  outline: 2px solid var(--done);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.char-count {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.char-count-near {
+  color: #e0a458;
+  font-weight: 700;
+}
+
+:root[data-bs-theme="light"] .char-count-near {
+  color: #8a5300;
+}
